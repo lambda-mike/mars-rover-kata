@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,9 @@
     "typescript": "^4.4.4"
   },
   "devDependencies": {
-    "@effect-ts/jest": "^0.31.0"
+    "@effect-ts/jest": "^0.31.0",
+    "@types/jest": "^27.0.2",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7"
   }
 }
