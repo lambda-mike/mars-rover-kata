@@ -19,7 +19,8 @@
   "dependencies": {
     "@effect-ts/core": "^0.45.5",
     "@effect-ts/system": "^0.42.5",
-    "@effect-ts/tracing-utils": "^0.5.2"
+    "@effect-ts/tracing-utils": "^0.5.2",
+    "typescript": "^4.4.4"
   },
   "devDependencies": {
     "@effect-ts/jest": "^0.31.0"

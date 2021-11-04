@@ -5,11 +5,13 @@ specifiers:
   '@effect-ts/jest': ^0.31.0
   '@effect-ts/system': ^0.42.5
   '@effect-ts/tracing-utils': ^0.5.2
+  typescript: ^4.4.4
 
 dependencies:
   '@effect-ts/core': 0.45.5
   '@effect-ts/system': 0.42.5
   '@effect-ts/tracing-utils': 0.5.2
+  typescript: 4.4.4
 
 devDependencies:
   '@effect-ts/jest': 0.31.0_@effect-ts+core@0.45.5
@@ -37,4 +39,10 @@ packages:
 
   /@effect-ts/tracing-utils/0.5.2:
     resolution: {integrity: sha512-sjIML3B9DdQ92STfZl8bsOuvTnprf6VoW9CYbILjt7wvdAp5kCSeP2bSMoTGXy2C83SLnGvhMdCI+dSiB8A42w==}
+    dev: false
+
+  /typescript/4.4.4:
+    resolution: {integrity: sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
     dev: false
