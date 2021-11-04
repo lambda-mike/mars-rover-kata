@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/lambda-mike/mars-rover-kata/issues"
   },
-  "homepage": "https://github.com/lambda-mike/mars-rover-kata#readme"
+  "homepage": "https://github.com/lambda-mike/mars-rover-kata#readme",
+  "dependencies": {
+    "@effect-ts/core": "^0.45.5",
+    "@effect-ts/system": "^0.42.5",
+    "@effect-ts/tracing-utils": "^0.5.2"
+  },
+  "devDependencies": {
+    "@effect-ts/jest": "^0.31.0"
+  }
 }

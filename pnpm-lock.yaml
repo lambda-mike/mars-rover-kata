@@ -1,0 +1,40 @@
+lockfileVersion: 5.3
+
+specifiers:
+  '@effect-ts/core': ^0.45.5
+  '@effect-ts/jest': ^0.31.0
+  '@effect-ts/system': ^0.42.5
+  '@effect-ts/tracing-utils': ^0.5.2
+
+dependencies:
+  '@effect-ts/core': 0.45.5
+  '@effect-ts/system': 0.42.5
+  '@effect-ts/tracing-utils': 0.5.2
+
+devDependencies:
+  '@effect-ts/jest': 0.31.0_@effect-ts+core@0.45.5
+
+packages:
+
+  /@effect-ts/core/0.45.5:
+    resolution: {integrity: sha512-hLJNtd2/A1Lnf6O68bDmalah6Ep2rn+6X0Q7Gb9mHfcsHsdzZDbWti1GcRF0oqw0p6Q/jnv+Fxvg1Msc57hroQ==}
+    dependencies:
+      '@effect-ts/system': 0.42.5
+    dev: false
+
+  /@effect-ts/jest/0.31.0_@effect-ts+core@0.45.5:
+    resolution: {integrity: sha512-ko5O9tllVznHPERmDo3eBd667LpohBX7KTEz3/4CUfMGPbKWWqun8FHsTcJxPDqN5P7C3E4Dlte8MqA8OW0z+w==}
+    peerDependencies:
+      '@effect-ts/core': ^0.45.0
+      jest: '>= 27.0.3'
+    dependencies:
+      '@effect-ts/core': 0.45.5
+    dev: true
+
+  /@effect-ts/system/0.42.5:
+    resolution: {integrity: sha512-x+5vtAkfmUfzYQ80LpVyWjidHgNoIxelbtwfPC0mC2YQhgWzUL3rWpzJXvpas6mGzjJhpbcGuxvVL4q3K3ng6w==}
+    dev: false
+
+  /@effect-ts/tracing-utils/0.5.2:
+    resolution: {integrity: sha512-sjIML3B9DdQ92STfZl8bsOuvTnprf6VoW9CYbILjt7wvdAp5kCSeP2bSMoTGXy2C83SLnGvhMdCI+dSiB8A42w==}
+    dev: false
