@@ -14,8 +14,8 @@ in pkgs.mkShell rec {
 
   buildInputs = [
     niv
-    #pkgs.nodejs-16_x
-    #pkgs.pnpm
+    pkgs.nodejs-16_x
+    pkgs.nodePackages.pnpm
   ];
 
 }
