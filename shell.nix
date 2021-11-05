@@ -14,6 +14,7 @@ in pkgs.mkShell rec {
 
   buildInputs = [
     niv
+    pkgs.nodePackages.typescript-language-server
     pkgs.nodejs-16_x
     pkgs.nodePackages.pnpm
   ];
