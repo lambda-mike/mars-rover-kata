@@ -64,7 +64,7 @@ describe("Mars Kata", () => {
       it("should head E if given N", async () => {
         const dir = Sol1.Orientation.N;
         const rover = Sol1.mkRover(x, y, dir);
-        const result = Sol1.turnLeft(rover);
+        const result = Sol1.turnRight(rover);
         expect(result.x).toBe(x);
         expect(result.y).toBe(y);
         expect(result.orientation).toBe(Sol1.Orientation.E);
@@ -72,7 +72,7 @@ describe("Mars Kata", () => {
       it("should head S if given E", async () => {
         const dir = Sol1.Orientation.E;
         const rover = Sol1.mkRover(x, y, dir);
-        const result = Sol1.turnLeft(rover);
+        const result = Sol1.turnRight(rover);
         expect(result.x).toBe(x);
         expect(result.y).toBe(y);
         expect(result.orientation).toBe(Sol1.Orientation.S);
@@ -80,7 +80,7 @@ describe("Mars Kata", () => {
       it("should head W if given S", async () => {
         const dir = Sol1.Orientation.S;
         const rover = Sol1.mkRover(x, y, dir);
-        const result = Sol1.turnLeft(rover);
+        const result = Sol1.turnRight(rover);
         expect(result.x).toBe(x);
         expect(result.y).toBe(y);
         expect(result.orientation).toBe(Sol1.Orientation.W);
@@ -88,7 +88,7 @@ describe("Mars Kata", () => {
       it("should head N if given W", async () => {
         const dir = Sol1.Orientation.W;
         const rover = Sol1.mkRover(x, y, dir);
-        const result = Sol1.turnLeft(rover);
+        const result = Sol1.turnRight(rover);
         expect(result.x).toBe(x);
         expect(result.y).toBe(y);
         expect(result.orientation).toBe(Sol1.Orientation.N);
