@@ -34,7 +34,7 @@ export const turnLeft = (rover: Rover): Rover => {
         case Orientation.E:
             return { ...rover, orientation: Orientation.N };
     }
-}
+};
 
 export const turnRight = (rover: Rover): Rover => {
     switch (rover.orientation) {
@@ -47,7 +47,7 @@ export const turnRight = (rover: Rover): Rover => {
         case Orientation.W:
             return { ...rover, orientation: Orientation.N };
     }
-}
+};
 
 export const moveForward = (planet: Planet, rover: Rover): Rover => {
     const wrapPositive = (a: number, max: number) =>
