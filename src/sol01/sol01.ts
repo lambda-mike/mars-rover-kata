@@ -29,7 +29,19 @@ export const turnLeft = (rover: Rover): Rover => {
     }
 }
 
-export declare const turnRight: (rover: Rover) => Rover
+export const turnRight = (rover: Rover): Rover => {
+    switch (rover.orientation) {
+        case Orientation.N:
+            return { ...rover, orientation: Orientation.E };
+        case Orientation.E:
+            return { ...rover, orientation: Orientation.S };
+        case Orientation.S:
+            return { ...rover, orientation: Orientation.W };
+        case Orientation.W:
+            return { ...rover, orientation: Orientation.N };
+    }
+}
+
 export declare const moveForward: (planet: Planet, rover: Rover) => Rover
 export declare const moveBackward: (planet: Planet, rover: Rover) => Rover
 
