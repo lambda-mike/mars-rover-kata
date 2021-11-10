@@ -16,6 +16,13 @@ export interface Rover {
     readonly orientation: Orientation;
 }
 
+export const mkPlanet = (w: number, h: number): Planet => ({ width: w, height: h });
+export const mkRover = (x: number, y: number, dir: Orientation): Rover => ({
+    x,
+    y,
+    orientation: dir,
+});
+
 export const turnLeft = (rover: Rover): Rover => {
     switch (rover.orientation) {
         case Orientation.N:
@@ -61,5 +68,3 @@ export const moveForward = (planet: Planet, rover: Rover): Rover => {
 
 export declare const moveBackward: (planet: Planet, rover: Rover) => Rover
 
-export declare const mkPlanet: (w: number, h: number) => Planet
-export declare const mkRover: (x: number, y: number, dir: Orientation) => Rover
