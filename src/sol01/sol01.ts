@@ -64,7 +64,22 @@ export const moveForward = (planet: Planet, rover: Rover): Rover => {
         case Orientation.W:
             return { ...rover, x: wrapNegative(rover.x, planet.width) };
     }
-}
+};
 
-export declare const moveBackward: (planet: Planet, rover: Rover) => Rover
-
+export const moveBackward = (planet: Planet, rover: Rover): Rover => {
+    const oppositeDir = (dir: Orientation): Orientation => {
+        switch (dir) {
+            case Orientation.N:
+                return Orientation.S;
+            case Orientation.S:
+                return Orientation.N;
+            case Orientation.E:
+                return Orientation.W;
+            case Orientation.W:
+                return Orientation.E;
+        }
+    };
+    const movedRoverOppositeDir =
+        moveForward(planet, { ...rover, orientation: oppositeDir(rover.orientation) });
+    return { ...movedRoverOppositeDir, orientation: rover.orientation };
+};
