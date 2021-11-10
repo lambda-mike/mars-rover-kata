@@ -1,4 +1,4 @@
-import * as Sol1 from "../src/sol01/sol01"
+import * as Sol1 from "../src/sol01/api"
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
