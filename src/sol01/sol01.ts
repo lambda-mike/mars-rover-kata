@@ -58,11 +58,11 @@ export const moveForward = (planet: Planet, rover: Rover): Rover => {
         case Orientation.N:
             return { ...rover, y: wrapPositive(rover.y, planet.height) };
         case Orientation.E:
-            return { ...rover, y: wrapPositive(rover.x, planet.width) };
+            return { ...rover, x: wrapPositive(rover.x, planet.width) };
         case Orientation.S:
             return { ...rover, y: wrapNegative(rover.y, planet.height) };
         case Orientation.W:
-            return { ...rover, y: wrapNegative(rover.x, planet.width) };
+            return { ...rover, x: wrapNegative(rover.x, planet.width) };
     }
 }
 
