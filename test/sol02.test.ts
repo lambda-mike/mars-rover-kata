@@ -1,3 +1,4 @@
+import { Orientation } from "../src/sol01/api";
 import * as Sol2 from "../src/sol02/domain"
 
 describe("Mars Kata", () => {
@@ -230,6 +231,41 @@ describe("Mars Kata", () => {
         expect(result.x).toBe(mars.width - 1);
         expect(result.y).toBe(y);
         expect(result.orientation).toBe(dir);
+      });
+    });
+    describe("move", () => {
+      const mars = Sol2.mkPlanet(3, 4);
+      const x = 1;
+      const y = 1;
+      const dir = Sol2.Orientation.N;
+      const rover = Sol2.mkRover(x, y, dir);
+      it("should go forward", async () => {
+        const result = Sol2.move(mars, rover, Sol2.Cmd.F);
+        expect(result.kind).toBe("Normal");
+        expect(result.rover.x).toBe(x);
+        expect(result.rover.y).toBe(y + 1);
+        expect(result.rover.orientation).toBe(dir);
+      });
+      it("should go backward", async () => {
+        const result = Sol2.move(mars, rover, Sol2.Cmd.B);
+        expect(result.kind).toBe("Normal");
+        expect(result.rover.x).toBe(x);
+        expect(result.rover.y).toBe(y - 1);
+        expect(result.rover.orientation).toBe(dir);
+      });
+      it("should turn left", async () => {
+        const result = Sol2.move(mars, rover, Sol2.Cmd.L);
+        expect(result.kind).toBe("Normal");
+        expect(result.rover.x).toBe(x);
+        expect(result.rover.y).toBe(y);
+        expect(result.rover.orientation).toBe(Orientation.W);
+      });
+      it("should turn right", async () => {
+        const result = Sol2.move(mars, rover, Sol2.Cmd.R);
+        expect(result.kind).toBe("Normal");
+        expect(result.rover.x).toBe(x);
+        expect(result.rover.y).toBe(y);
+        expect(result.rover.orientation).toBe(Orientation.E);
       });
     });
   });
