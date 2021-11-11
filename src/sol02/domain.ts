@@ -10,6 +10,11 @@ export enum Orientation {
     "W",
 }
 
+export interface Pos {
+    readonly x: number;
+    readonly y: number;
+}
+
 export interface Rover {
     readonly x: number;
     readonly y: number;
@@ -83,3 +88,22 @@ export const moveBackward = (planet: Planet, rover: Rover): Rover => {
         moveForward(planet, { ...rover, orientation: oppositeDir(rover.orientation) });
     return { ...movedRoverOppositeDir, orientation: rover.orientation };
 };
+
+export enum Cmd {
+    "F",
+    "B",
+    "L",
+    "R",
+}
+
+export interface Obstacle {
+    pos: Pos;
+}
+
+export type TravelOutcome =
+    | { kind: "Normal", rover: Rover }
+    | { kind: "Hit", rover: Rover }
+    ;
+
+export declare const move: (planet: Planet, rover: Rover, cmd: Cmd) => TravelOutcome;
+export declare const travel: (planet: Planet, rover: Rover, cmds: Array<Cmd>) => TravelOutcome;
