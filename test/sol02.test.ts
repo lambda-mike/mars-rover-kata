@@ -239,33 +239,51 @@ describe("Mars Kata", () => {
       const y = 1;
       const dir = Sol2.Orientation.N;
       const rover = Sol2.mkRover(x, y, dir);
+      const obstacles: Array<Sol2.Obstacle> =
+        [{ pos: { x: 2, y: 1 } }, { pos: { x: 3, y: 3 } }];
       it("should go forward", async () => {
-        const result = Sol2.move(mars, rover, Sol2.Cmd.F);
+        const result = Sol2.move(mars, rover, obstacles, Sol2.Cmd.F);
         expect(result.kind).toBe("Normal");
         expect(result.rover.x).toBe(x);
         expect(result.rover.y).toBe(y + 1);
         expect(result.rover.orientation).toBe(dir);
       });
       it("should go backward", async () => {
-        const result = Sol2.move(mars, rover, Sol2.Cmd.B);
+        const result = Sol2.move(mars, rover, obstacles, Sol2.Cmd.B);
         expect(result.kind).toBe("Normal");
         expect(result.rover.x).toBe(x);
         expect(result.rover.y).toBe(y - 1);
         expect(result.rover.orientation).toBe(dir);
       });
       it("should turn left", async () => {
-        const result = Sol2.move(mars, rover, Sol2.Cmd.L);
+        const result = Sol2.move(mars, rover, obstacles, Sol2.Cmd.L);
         expect(result.kind).toBe("Normal");
         expect(result.rover.x).toBe(x);
         expect(result.rover.y).toBe(y);
         expect(result.rover.orientation).toBe(Orientation.W);
       });
       it("should turn right", async () => {
-        const result = Sol2.move(mars, rover, Sol2.Cmd.R);
+        const result = Sol2.move(mars, rover, obstacles, Sol2.Cmd.R);
         expect(result.kind).toBe("Normal");
         expect(result.rover.x).toBe(x);
         expect(result.rover.y).toBe(y);
         expect(result.rover.orientation).toBe(Orientation.E);
+      });
+      it("should not hit obstacle when going forward", async () => {
+        const orientation = Orientation.E;
+        const result = Sol2.move(mars, { ...rover, orientation }, obstacles, Sol2.Cmd.F);
+        expect(result.kind).toBe("Hit");
+        expect(result.rover.x).toBe(x);
+        expect(result.rover.y).toBe(y);
+        expect(result.rover.orientation).toBe(orientation);
+      });
+      it("should not hit obstacle when going backwards", async () => {
+        const orientation = Orientation.W;
+        const result = Sol2.move(mars, { ...rover, orientation }, obstacles, Sol2.Cmd.B);
+        expect(result.kind).toBe("Hit");
+        expect(result.rover.x).toBe(x);
+        expect(result.rover.y).toBe(y);
+        expect(result.rover.orientation).toBe(orientation);
       });
     });
   });

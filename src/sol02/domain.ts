@@ -105,5 +105,40 @@ export type TravelOutcome =
     | { kind: "Hit", rover: Rover }
     ;
 
-export declare const move: (planet: Planet, rover: Rover, cmd: Cmd) => TravelOutcome;
-export declare const travel: (planet: Planet, rover: Rover, cmds: Array<Cmd>) => TravelOutcome;
+export const move = (
+    planet: Planet,
+    rover: Rover,
+    obstacles: Array<Obstacle>,
+    cmd: Cmd
+): TravelOutcome => {
+    const hasHitObstacle = (r: Rover): boolean =>
+        undefined !== obstacles.find(
+            ({ pos }) => r.x === pos.x && r.y === pos.y);
+    switch (cmd) {
+        case Cmd.L:
+            return { kind: "Normal", rover: turnLeft(rover) };
+        case Cmd.R:
+            return { kind: "Normal", rover: turnRight(rover) };
+        case Cmd.F: {
+            const newRover = moveForward(planet, rover);
+            return hasHitObstacle(newRover)
+                ? { kind: "Hit", rover: rover }
+                : { kind: "Normal", rover: newRover }
+                ;
+        }
+        case Cmd.B: {
+            const newRover = moveBackward(planet, rover);
+            return hasHitObstacle(newRover)
+                ? { kind: "Hit", rover: rover }
+                : { kind: "Normal", rover: newRover }
+                ;
+        }
+    }
+};
+
+export declare const travel: (
+    planet: Planet,
+    rover: Rover,
+    obstacles: Array<Obstacle>,
+    cmds: Array<Cmd>,
+) => TravelOutcome;
