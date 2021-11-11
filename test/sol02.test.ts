@@ -1,4 +1,5 @@
 import { Orientation } from "../src/sol01/api";
+// TODO remove Sol2 import everything
 import * as Sol2 from "../src/sol02/domain"
 
 describe("Mars Kata", () => {
@@ -284,6 +285,51 @@ describe("Mars Kata", () => {
         expect(result.rover.x).toBe(x);
         expect(result.rover.y).toBe(y);
         expect(result.rover.orientation).toBe(orientation);
+      });
+    });
+    describe("travel", () => {
+      const mars = Sol2.mkPlanet(3, 4);
+      const x = 1;
+      const y = 1;
+      const dir = Sol2.Orientation.N;
+      const rover = Sol2.mkRover(x, y, dir);
+      const obstacles: Array<Sol2.Obstacle> =
+        [{ pos: { x: 2, y: 1 } }, { pos: { x: 2, y: 3 } }];
+      it("should finish travel when did not hit obstacle", async () => {
+        const cmds: Array<Sol2.Cmd> = [
+          Sol2.Cmd.F,
+          Sol2.Cmd.R,
+          Sol2.Cmd.F,
+          Sol2.Cmd.F,
+          Sol2.Cmd.F,
+          Sol2.Cmd.R,
+          Sol2.Cmd.F,
+          Sol2.Cmd.F,
+          Sol2.Cmd.L,
+        ];
+        const result = Sol2.travel(mars, rover, obstacles, cmds);
+        expect(result.kind).toBe("Normal");
+        expect(result.rover.x).toBe(1);
+        expect(result.rover.y).toBe(0);
+        expect(result.rover.orientation).toBe(Sol2.Orientation.W);
+      });
+      it("should abort travel when hit obstacle", async () => {
+        const cmds: Array<Sol2.Cmd> = [
+          Sol2.Cmd.F,
+          Sol2.Cmd.R,
+          Sol2.Cmd.F,
+          Sol2.Cmd.L,
+          Sol2.Cmd.F,
+          Sol2.Cmd.R,
+          Sol2.Cmd.F,
+          Sol2.Cmd.F,
+          Sol2.Cmd.L,
+        ];
+        const result = Sol2.travel(mars, rover, obstacles, cmds);
+        expect(result.kind).toBe("Hit");
+        expect(result.rover.x).toBe(2);
+        expect(result.rover.y).toBe(2);
+        expect(result.rover.orientation).toBe(Sol2.Orientation.N);
       });
     });
   });
