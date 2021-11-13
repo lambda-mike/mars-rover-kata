@@ -1,6 +1,5 @@
 import { Orientation } from "../src/sol01/api";
-// TODO remove Sol2 import everything
-import * as Sol2 from "../src/sol02/domain"
+import * as Sol2 from "../src/sol02/domain";
 
 describe("Mars Kata", () => {
   describe("Sol02", () => {
@@ -311,7 +310,7 @@ describe("Mars Kata", () => {
         expect(result.kind).toBe("Normal");
         expect(result.rover.x).toBe(1);
         expect(result.rover.y).toBe(0);
-        expect(result.rover.orientation).toBe(Sol2.Orientation.W);
+        expect(result.rover.orientation).toBe(Sol2.Orientation.E);
       });
       it("should abort travel when hit obstacle", async () => {
         const cmds: Array<Sol2.Cmd> = [

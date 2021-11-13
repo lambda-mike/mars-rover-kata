@@ -21,7 +21,9 @@ export interface Rover {
     readonly orientation: Orientation;
 }
 
+// TODO return obj or Error ??
 export const mkPlanet = (w: number, h: number): Planet => ({ width: w, height: h });
+
 export const mkRover = (x: number, y: number, dir: Orientation): Rover => ({
     x,
     y,
@@ -136,9 +138,18 @@ export const move = (
     }
 };
 
-export declare const travel: (
+export const travel = (
     planet: Planet,
     rover: Rover,
     obstacles: Array<Obstacle>,
     cmds: Array<Cmd>,
-) => TravelOutcome;
+): TravelOutcome => {
+    let moveResult: TravelOutcome = { kind: "Normal", rover: { ...rover } };
+    for (const cmd of cmds) {
+        moveResult = move(planet, moveResult.rover, obstacles, cmd);
+        if (moveResult.kind === "Hit") {
+            break;
+        }
+    }
+    return moveResult;
+};
