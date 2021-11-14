@@ -342,5 +342,99 @@ describe("Mars Kata", () => {
         expect(result.rover.orientation).toBe(Sol3.Orientation.N);
       });
     });
+    describe("parsePlanet", () => {
+      it("should parse correct input", async () => {
+        const result = Sol3.parsePlanet("5x4");
+        expect(result).toStrictEqual(E.right({ width: 5, height: 4 }));
+      });
+      it("should return error given incorrect input", async () => {
+        const result1 = Sol3.parsePlanet("ax4");
+        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        const result2 = Sol3.parsePlanet("3xb");
+        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        const result3 = Sol3.parsePlanet("3y8");
+        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+        const result4 = Sol3.parsePlanet("-3x8");
+        expect(result4).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+        const result5 = Sol3.parsePlanet("3x-8");
+        expect(result5).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+      });
+    });
+    describe("parseObstacle", () => {
+      it("should parse correct input", async () => {
+        const result = Sol3.parseObstacle("1,2");
+        expect(result).toStrictEqual(E.right({ pos: { x: 1, y: 2 } }));
+      });
+      it("should return error given incorrect input", async () => {
+        const result1 = Sol3.parseObstacle(",2");
+        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        const result2 = Sol3.parseObstacle("3,");
+        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        const result3 = Sol3.parseObstacle("a,3");
+        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+        const result4 = Sol3.parseObstacle("-2,3");
+        expect(result4).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+      });
+    });
+    describe("parseObstacles", () => {
+      it("should parse correct input", async () => {
+        const result = Sol3.parseObstacles("1,2 0,0 3,4");
+        expect(result).toStrictEqual(E.right([{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]));
+      });
+      it("should return error given incorrect input", async () => {
+        const result1 = Sol3.parseObstacles(",2 3,4");
+        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        const result2 = Sol3.parseObstacles("3, 3, 3");
+        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        const result3 = Sol3.parseObstacles("a,3 4,3");
+        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+        const result4 = Sol3.parseObstacles("3,-3 4,3");
+        expect(result4).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+      });
+    });
+    describe("parseOrientation", () => {
+      it("should parse correct input", async () => {
+        const n = Sol3.parseOrientation("N");
+        expect(n).toStrictEqual(E.right(Sol3.Orientation.N));
+        const e = Sol3.parseOrientation("E");
+        expect(e).toStrictEqual(E.right(Sol3.Orientation.E));
+        const s = Sol3.parseOrientation("S");
+        expect(s).toStrictEqual(E.right(Sol3.Orientation.S));
+        const w = Sol3.parseOrientation("W");
+        expect(w).toStrictEqual(E.right(Sol3.Orientation.W));
+      });
+      it("should return error given incorrect input", async () => {
+        const result1 = Sol3.parseOrientation("A");
+        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        const result2 = Sol3.parseOrientation("3");
+        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+      });
+    });
+    describe("parseRover", () => {
+      it("should parse correct input", async () => {
+        const result = Sol3.parseObstacles("1,2:W");
+        expect(result).toStrictEqual(E.right({ x: 1, y: 2, orientation: Sol3.Orientation.W }));
+      });
+      it("should return error given incorrect input", async () => {
+        const result1 = Sol3.parseObstacles("1,2W");
+        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        const result2 = Sol3.parseObstacles("1,2:A");
+        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        const result3 = Sol3.parseObstacles("1.2:A");
+        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+      });
+    });
+    describe("renderTravelOutcome", () => {
+      it("should return correct srting for the Normal outcome", async () => {
+        const outcome: Sol3.TravelOutcome = { kind: "Normal", rover: { x: 3, y: 8, orientation: Sol3.Orientation.N } };
+        const result = Sol3.renderTravelOutcome(outcome);
+        expect(result).toStrictEqual("3:8:N");
+      });
+      it("should return correct srting for the Hit outcome", async () => {
+        const outcome: Sol3.TravelOutcome = { kind: "Hit", rover: { x: 1, y: 7, orientation: Sol3.Orientation.E } };
+        const result = Sol3.renderTravelOutcome(outcome);
+        expect(result).toStrictEqual("O:1:7:E");
+      });
+    });
   });
 });

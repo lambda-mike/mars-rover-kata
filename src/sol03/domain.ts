@@ -162,3 +162,10 @@ export const travel = (
     }
     return moveResult;
 };
+
+export declare const parsePlanet: (input: string) => E.Either<Error, Planet>;
+export declare const parseObstacle: (input: string) => E.Either<Error, Obstacle>;
+export declare const parseObstacles: (input: string) => E.Either<Error, Array<Obstacle>>;
+export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
+export declare const parseRover: (input: string) => E.Either<Error, Rover>;
+export declare const renderTravelOutcome: (t: TravelOutcome) => string;
