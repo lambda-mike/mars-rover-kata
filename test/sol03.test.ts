@@ -349,15 +349,15 @@ describe("Mars Kata", () => {
       });
       it("should return error given incorrect input", async () => {
         const result1 = Sol3.parsePlanet("ax4");
-        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        expect(result1).toStrictEqual(E.left(new Error("Wrong string format!")));
         const result2 = Sol3.parsePlanet("3xb");
-        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        expect(result2).toStrictEqual(E.left(new Error("Wrong string format!")));
         const result3 = Sol3.parsePlanet("3y8");
-        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+        expect(result3).toStrictEqual(E.left(new Error("Wrong string format!")));
         const result4 = Sol3.parsePlanet("-3x8");
-        expect(result4).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+        expect(result4).toStrictEqual(E.left(new Error("Wrong string format!")));
         const result5 = Sol3.parsePlanet("3x-8");
-        expect(result5).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+        expect(result5).toStrictEqual(E.left(new Error("Wrong string format!")));
       });
     });
     describe("parseObstacle", () => {

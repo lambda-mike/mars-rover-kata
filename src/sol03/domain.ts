@@ -163,7 +163,30 @@ export const travel = (
     return moveResult;
 };
 
-export declare const parsePlanet: (input: string) => E.Either<Error, Planet>;
+export const parsePlanet = (input: string): E.Either<Error, Planet> => {
+    const regex = /^\d+x\d+$/;
+    if (!regex.test(input)) {
+        return E.left(new Error("Wrong string format!"));
+    }
+    const dimensions = input.split("x");
+    if (dimensions.length !== 2) {
+        return E.left(new Error("Wrong string format!"));
+    }
+    const [widthStr, heightStr] = dimensions;
+    try {
+        const width = parseInt(widthStr);
+        const height = parseInt(heightStr);
+        if (width <= 0 || height <= 0) {
+            return E.left(new Error("Size of the planet must be positive!"));
+        }
+        return E.right({ width, height });
+    }
+    catch (_) {
+        console.error(JSON.stringify(_));
+        return E.left(new Error("Wrong string format!"));
+    }
+};
+
 export declare const parseObstacle: (input: string) => E.Either<Error, Obstacle>;
 export declare const parseObstacles: (input: string) => E.Either<Error, Array<Obstacle>>;
 export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
