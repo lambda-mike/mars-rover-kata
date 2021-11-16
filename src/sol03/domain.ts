@@ -1,4 +1,5 @@
 import * as E from "@effect-ts/core/Either"
+import { pipe } from "@effect-ts/core/Function"
 
 export interface Planet {
     readonly width: number;
@@ -163,31 +164,40 @@ export const travel = (
     return moveResult;
 };
 
-export const parsePlanet = (input: string): E.Either<Error, Planet> => {
-    const regex = /^\d+x\d+$/;
+const parseNumPair = (sep: string) => (input: string): E.Either<Error, [number, number]> => {
+    const regex = new RegExp(`^\\d+${sep}\\d+$`);
     if (!regex.test(input)) {
         return E.left(new Error("Wrong string format!"));
     }
-    const dimensions = input.split("x");
-    if (dimensions.length !== 2) {
-        return E.left(new Error("Wrong string format!"));
+    const nums = input.split(`${sep}`);
+    if (nums.length !== 2) {
+        return E.left(new Error("There should only be two numbers in the input string!"));
     }
-    const [widthStr, heightStr] = dimensions;
+    const [num1Str, num2Str] = nums;
     try {
-        const width = parseInt(widthStr);
-        const height = parseInt(heightStr);
+        const num1 = parseInt(num1Str);
+        const num2 = parseInt(num2Str);
+        return E.right([num1, num2]);
+    }
+    catch (_) {
+        console.error("[parseNumPair]", JSON.stringify(_));
+        return E.left(new Error("parseInt failed!"));
+    }
+};
+
+export const parsePlanet = (input: string): E.Either<Error, Planet> => pipe(
+    input,
+    parseNumPair("x"),
+    E.chain(([width, height]) => {
         if (width <= 0 || height <= 0) {
             return E.left(new Error("Size of the planet must be positive!"));
         }
         return E.right({ width, height });
-    }
-    catch (_) {
-        console.error(JSON.stringify(_));
-        return E.left(new Error("Wrong string format!"));
-    }
-};
+    }),
+);
 
-export declare const parseObstacle: (input: string) => E.Either<Error, Obstacle>;
+export const parseObstacle = (input: string): E.Either<Error, Obstacle> => E.left(new Error());
+// export const parseObstacle = (input: string): E.Either<Error, Obstacle> => {}
 export declare const parseObstacles: (input: string) => E.Either<Error, Array<Obstacle>>;
 export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
 export declare const parseRover: (input: string) => E.Either<Error, Rover>;
