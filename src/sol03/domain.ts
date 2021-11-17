@@ -1,5 +1,8 @@
+import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as E from "@effect-ts/core/Either"
-import { pipe } from "@effect-ts/core/Function"
+import * as I from "@effect-ts/core/Iterable"
+import { makeAssociative } from "@effect-ts/core/Associative"
+import { pipe, flow } from "@effect-ts/core/Function"
 
 export interface Planet {
     readonly width: number;
@@ -207,7 +210,17 @@ export const parseObstacle = (input: string): E.Either<Error, Obstacle> => pipe(
     }),
 );
 
-export declare const parseObstacles: (input: string) => E.Either<Error, Array<Obstacle>>;
+export const parseObstacles = (input: string): E.Either<A.Array<Error>, A.Array<Obstacle>> => {
+    const ValidationApplicative = E.getValidationApplicative(
+        makeAssociative<Array<Error>>((l, r) => [...l, ...r]),
+    );
+    const traverse = A.forEachF(ValidationApplicative);
+    return pipe(
+        input.split(" "),
+        traverse(flow(parseObstacle, E.mapLeft((e) => [e]))),
+    );
+};
+
 export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
 export declare const parseRover: (input: string) => E.Either<Error, Rover>;
 export declare const renderTravelOutcome: (t: TravelOutcome) => string;

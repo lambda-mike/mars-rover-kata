@@ -383,13 +383,13 @@ describe("Mars Kata", () => {
       });
       it("should return error given incorrect input", async () => {
         const result1 = Sol3.parseObstacles(",2 3,4");
-        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        expect(result1).toStrictEqual(E.left([new Error("Wrong string format!")]));
         const result2 = Sol3.parseObstacles("3, 3, 3");
-        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        expect(result2).toStrictEqual(E.left([new Error("Wrong string format!"), new Error("Wrong string format!"), new Error("Wrong string format!")]));
         const result3 = Sol3.parseObstacles("a,3 4,3");
-        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+        expect(result3).toStrictEqual(E.left([new Error("Wrong string format!")]));
         const result4 = Sol3.parseObstacles("3,-3 4,3");
-        expect(result4).toStrictEqual(E.left("Coordinates must not be negative numbers!"));
+        expect(result4).toStrictEqual(E.left([new Error("Wrong string format!")]));
       });
     });
     describe("parseOrientation", () => {
