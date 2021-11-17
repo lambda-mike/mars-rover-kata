@@ -196,8 +196,17 @@ export const parsePlanet = (input: string): E.Either<Error, Planet> => pipe(
     }),
 );
 
-export const parseObstacle = (input: string): E.Either<Error, Obstacle> => E.left(new Error());
-// export const parseObstacle = (input: string): E.Either<Error, Obstacle> => {}
+export const parseObstacle = (input: string): E.Either<Error, Obstacle> => pipe(
+    input,
+    parseNumPair(","),
+    E.chain(([x, y]) => {
+        if (x < 0 || y < 0) {
+            return E.left(new Error("Coordinates must not be negative!"));
+        }
+        return E.right({ pos: { x, y } });
+    }),
+);
+
 export declare const parseObstacles: (input: string) => E.Either<Error, Array<Obstacle>>;
 export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
 export declare const parseRover: (input: string) => E.Either<Error, Rover>;
