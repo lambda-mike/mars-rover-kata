@@ -169,7 +169,7 @@ export const travel = (
 const parseNumPair = (sep: string) => (input: string): E.Either<Error, [number, number]> => {
     const regex = new RegExp(`^\\d+${sep}\\d+$`);
     if (!regex.test(input)) {
-        return E.left(new Error("Wrong string format!"));
+        return E.left(new Error("Wrong numbers pair string format!"));
     }
     const nums = input.split(`${sep}`);
     if (nums.length !== 2) {

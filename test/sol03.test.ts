@@ -348,16 +348,17 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual(E.right({ width: 5, height: 4 }));
       });
       it("should return error given incorrect input", async () => {
+        const errMsg = "Wrong numbers pair string format!";
         const result1 = Sol3.parsePlanet("ax4");
-        expect(result1).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result1).toStrictEqual(E.left(new Error(errMsg)));
         const result2 = Sol3.parsePlanet("3xb");
-        expect(result2).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result2).toStrictEqual(E.left(new Error(errMsg)));
         const result3 = Sol3.parsePlanet("3y8");
-        expect(result3).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result3).toStrictEqual(E.left(new Error(errMsg)));
         const result4 = Sol3.parsePlanet("-3x8");
-        expect(result4).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result4).toStrictEqual(E.left(new Error(errMsg)));
         const result5 = Sol3.parsePlanet("3x-8");
-        expect(result5).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result5).toStrictEqual(E.left(new Error(errMsg)));
       });
     });
     describe("parseObstacle", () => {
@@ -366,14 +367,15 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual(E.right({ pos: { x: 1, y: 2 } }));
       });
       it("should return error given incorrect input", async () => {
+        const errMsg = "Wrong numbers pair string format!";
         const result1 = Sol3.parseObstacle(",2");
-        expect(result1).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result1).toStrictEqual(E.left(new Error(errMsg)));
         const result2 = Sol3.parseObstacle("3,");
-        expect(result2).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result2).toStrictEqual(E.left(new Error(errMsg)));
         const result3 = Sol3.parseObstacle("a,3");
-        expect(result3).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result3).toStrictEqual(E.left(new Error(errMsg)));
         const result4 = Sol3.parseObstacle("-2,3");
-        expect(result4).toStrictEqual(E.left(new Error("Wrong string format!")));
+        expect(result4).toStrictEqual(E.left(new Error(errMsg)));
       });
     });
     describe("parseObstacles", () => {
@@ -382,14 +384,15 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual(E.right([{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]));
       });
       it("should return error given incorrect input", async () => {
+        const errMsg = "Wrong numbers pair string format!";
         const result1 = Sol3.parseObstacles(",2 3,4");
-        expect(result1).toStrictEqual(E.left([new Error("Wrong string format!")]));
+        expect(result1).toStrictEqual(E.left([new Error(errMsg)]));
         const result2 = Sol3.parseObstacles("3, 3, 3");
-        expect(result2).toStrictEqual(E.left([new Error("Wrong string format!"), new Error("Wrong string format!"), new Error("Wrong string format!")]));
+        expect(result2).toStrictEqual(E.left([new Error(errMsg), new Error(errMsg), new Error(errMsg)]));
         const result3 = Sol3.parseObstacles("a,3 4,3");
-        expect(result3).toStrictEqual(E.left([new Error("Wrong string format!")]));
+        expect(result3).toStrictEqual(E.left([new Error(errMsg)]));
         const result4 = Sol3.parseObstacles("3,-3 4,3");
-        expect(result4).toStrictEqual(E.left([new Error("Wrong string format!")]));
+        expect(result4).toStrictEqual(E.left([new Error(errMsg)]));
       });
     });
     describe("parseOrientation", () => {
