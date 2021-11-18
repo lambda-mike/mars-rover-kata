@@ -1,6 +1,7 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as E from "@effect-ts/core/Either"
 import * as O from "@effect-ts/core/Option"
+import * as TP from "@effect-ts/core/Collections/Immutable/Tuple"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 
@@ -236,16 +237,62 @@ export const parseOrientation = (input: string): E.Either<Error, Orientation> =>
     }
 };
 
+// Classic
+/*
+export const parseRover = (input: string): E.Either<Error, Rover> => {
+    const posAndDirStr = input.split(":");
+    if (posAndDirStr.length !== 2) {
+        return E.left(new Error("Wrong rover input string format!"));
+    }
+    const pos = parseNumPair(",")(posAndDirStr[0]);
+    const orientation = parseOrientation(posAndDirStr[1]);
+    return pipe(
+        pos,
+        E.zip(orientation),
+        E.map(flow(
+            TP.toNative,
+            ([[x, y], orientation]) => ({ x, y, orientation }),
+        )),
+    );
+};
+*/
+
+// E.gen
+/*
+*/
 export const parseRover = (input: string): E.Either<Error, Rover> => {
     const posAndDirStr = input.split(":");
     return E.gen(function*(_) {
         if (posAndDirStr.length !== 2) {
             yield _(E.left(new Error("Wrong rover input string format!")));
         }
-        const [x, y]: [number, number] = yield _(parseNumPair(",")(posAndDirStr[0]));
-        const orientation: Orientation = yield _(parseOrientation(posAndDirStr[1]));
+        const [x, y]: [number, number] =
+            yield _(parseNumPair(",")(posAndDirStr[0]));
+        const orientation: Orientation =
+            yield _(parseOrientation(posAndDirStr[1]));
         return { x, y, orientation };
     });
 };
+
+// E.do
+/*
+export const parseRover = (input: string): E.Either<Error, Rover> => {
+    const posAndDirStr = input.split(":");
+    return pipe(
+        E.do,
+        E.let("posAndDirTuple", () =>
+            (posAndDirStr.length !== 2)
+                ? E.left(new Error("Wrong rover input string format!"))
+                : E.right([posAndDirStr[0], posAndDirStr[1]])
+        ),
+        E.let("pos", ({ posAndDirTuple }) =>
+            parseNumPair(",")(posAndDirTuple[0])),
+        E.let("orientation", ({ posAndDirTuple }) =>
+            parseOrientation(posAndDirTuple[1])),
+        E.map(({ pos, orientation }) =>
+            ({ x: pos[0], y: pos[1], orientation })),
+    );
+};
+*/
 
 export declare const renderTravelOutcome: (t: TravelOutcome) => string;
