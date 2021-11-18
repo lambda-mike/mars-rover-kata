@@ -1,5 +1,6 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as E from "@effect-ts/core/Either"
+import * as O from "@effect-ts/core/Option"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 
@@ -235,5 +236,16 @@ export const parseOrientation = (input: string): E.Either<Error, Orientation> =>
     }
 };
 
-export declare const parseRover: (input: string) => E.Either<Error, Rover>;
+export const parseRover = (input: string): E.Either<Error, Rover> => {
+    const posAndDirStr = input.split(":");
+    return E.gen(function*(_) {
+        if (posAndDirStr.length !== 2) {
+            yield _(E.left(new Error("Wrong rover input string format!")));
+        }
+        const [x, y]: [number, number] = yield _(parseNumPair(",")(posAndDirStr[0]));
+        const orientation: Orientation = yield _(parseOrientation(posAndDirStr[1]));
+        return { x, y, orientation };
+    });
+};
+
 export declare const renderTravelOutcome: (t: TravelOutcome) => string;

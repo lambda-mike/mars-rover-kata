@@ -416,16 +416,16 @@ describe("Mars Kata", () => {
     });
     describe("parseRover", () => {
       it("should parse correct input", async () => {
-        const result = Sol3.parseObstacles("1,2:W");
+        const result = Sol3.parseRover("1,2:W");
         expect(result).toStrictEqual(E.right({ x: 1, y: 2, orientation: Sol3.Orientation.W }));
       });
       it("should return error given incorrect input", async () => {
-        const result1 = Sol3.parseObstacles("1,2W");
-        expect(result1).toStrictEqual(E.left("Wrong string format!"));
-        const result2 = Sol3.parseObstacles("1,2:A");
-        expect(result2).toStrictEqual(E.left("Wrong string format!"));
-        const result3 = Sol3.parseObstacles("1.2:A");
-        expect(result3).toStrictEqual(E.left("Wrong string format!"));
+        const result1 = Sol3.parseRover("1,2W");
+        expect(result1).toStrictEqual(E.left(new Error("Wrong rover input string format!")));
+        const result2 = Sol3.parseRover("1,2:A");
+        expect(result2).toStrictEqual(E.left(new Error("Wrong orientation string format!")));
+        const result3 = Sol3.parseRover("1.2:A");
+        expect(result3).toStrictEqual(E.left(new Error("Wrong numbers pair string format!")));
       });
     });
     describe("renderTravelOutcome", () => {
