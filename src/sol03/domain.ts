@@ -220,7 +220,20 @@ export const parseObstacles = (input: string): E.Either<ReadonlyArray<Error>, Re
     );
 };
 
-export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
-// TODO many errors possibly?
+export const parseOrientation = (input: string): E.Either<Error, Orientation> => {
+    switch (input) {
+        case "N":
+            return E.right(Orientation.N);
+        case "E":
+            return E.right(Orientation.E);
+        case "S":
+            return E.right(Orientation.S);
+        case "W":
+            return E.right(Orientation.W);
+        default:
+            return E.left(new Error("Wrong orientation string format!"))
+    }
+};
+
 export declare const parseRover: (input: string) => E.Either<Error, Rover>;
 export declare const renderTravelOutcome: (t: TravelOutcome) => string;

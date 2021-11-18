@@ -407,10 +407,11 @@ describe("Mars Kata", () => {
         expect(w).toStrictEqual(E.right(Sol3.Orientation.W));
       });
       it("should return error given incorrect input", async () => {
+        const errMsg = "Wrong orientation string format!"
         const result1 = Sol3.parseOrientation("A");
-        expect(result1).toStrictEqual(E.left("Wrong string format!"));
+        expect(result1).toStrictEqual(E.left(new Error(errMsg)));
         const result2 = Sol3.parseOrientation("3");
-        expect(result2).toStrictEqual(E.left("Wrong string format!"));
+        expect(result2).toStrictEqual(E.left(new Error(errMsg)));
       });
     });
     describe("parseRover", () => {
