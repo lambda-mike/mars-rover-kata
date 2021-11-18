@@ -1,6 +1,5 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as E from "@effect-ts/core/Either"
-import * as I from "@effect-ts/core/Iterable"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 
@@ -210,7 +209,7 @@ export const parseObstacle = (input: string): E.Either<Error, Obstacle> => pipe(
     }),
 );
 
-export const parseObstacles = (input: string): E.Either<A.Array<Error>, A.Array<Obstacle>> => {
+export const parseObstacles = (input: string): E.Either<ReadonlyArray<Error>, ReadonlyArray<Obstacle>> => {
     const ValidationApplicative = E.getValidationApplicative(
         makeAssociative<Array<Error>>((l, r) => [...l, ...r]),
     );
@@ -222,5 +221,6 @@ export const parseObstacles = (input: string): E.Either<A.Array<Error>, A.Array<
 };
 
 export declare const parseOrientation: (input: string) => E.Either<Error, Orientation>;
+// TODO many errors possibly?
 export declare const parseRover: (input: string) => E.Either<Error, Rover>;
 export declare const renderTravelOutcome: (t: TravelOutcome) => string;
