@@ -298,7 +298,6 @@ export const renderTravelOutcome = (t: TravelOutcome): string => {
         case "Normal":
             return roverStr;
         case "Hit":
-        case "Normal":
             return `O:${roverStr}`;
     }
 };

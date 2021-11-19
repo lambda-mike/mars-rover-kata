@@ -28,5 +28,5 @@ test("example 04", () => {
         traverse((n) => (n > 3 ? E.left(["bad" + n]) : E.right(n)))
     )
 
-    console.log(result)
+    //console.log(result)
 })

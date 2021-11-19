@@ -13,6 +13,6 @@ test("example E.gen", () => {
         const y = yield* _(fn(x + 1));
         return x + y;
     });
-    console.log(result);
+    //console.log(result);
     expect(result).toStrictEqual(E.right(5));
 });

@@ -21,7 +21,6 @@ export interface Rover {
     readonly orientation: Orientation;
 }
 
-// TODO return obj or Error ??
 export const mkPlanet = (w: number, h: number): Planet => ({ width: w, height: h });
 
 export const mkRover = (x: number, y: number, dir: Orientation): Rover => ({
