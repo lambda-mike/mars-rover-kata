@@ -262,12 +262,10 @@ export const parseRover = (input: string): E.Either<Error, Rover> => {
     const posAndDirStr = input.split(":");
     return E.gen(function*(_) {
         if (posAndDirStr.length !== 2) {
-            yield _(E.left(new Error("Wrong rover input string format!")));
+            yield* _(E.left(new Error("Wrong rover input string format!")));
         }
-        const [x, y]: [number, number] =
-            yield _(parseNumPair(",")(posAndDirStr[0]));
-        const orientation: Orientation =
-            yield _(parseOrientation(posAndDirStr[1]));
+        const [x, y] = yield* _(parseNumPair(",")(posAndDirStr[0]));
+        const orientation = yield* _(parseOrientation(posAndDirStr[1]));
         return { x, y, orientation };
     });
 };
