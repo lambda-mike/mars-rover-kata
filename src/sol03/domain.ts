@@ -1,7 +1,5 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as E from "@effect-ts/core/Either"
-import * as O from "@effect-ts/core/Option"
-import * as TP from "@effect-ts/core/Collections/Immutable/Tuple"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 
