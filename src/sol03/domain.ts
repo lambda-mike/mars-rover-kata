@@ -291,4 +291,14 @@ export const parseRover = (input: string): E.Either<Error, Rover> => {
 };
 */
 
-export declare const renderTravelOutcome: (t: TravelOutcome) => string;
+export const renderTravelOutcome = (t: TravelOutcome): string => {
+    const roverStr =
+        `${t.rover.x}:${t.rover.y}:${t.rover.orientation}`;
+    switch (t.kind) {
+        case "Normal":
+            return roverStr;
+        case "Hit":
+        case "Normal":
+            return `O:${roverStr}`;
+    }
+};
