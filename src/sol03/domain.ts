@@ -9,10 +9,10 @@ export interface Planet {
 }
 
 export enum Orientation {
-    "N",
-    "E",
-    "S",
-    "W",
+    N = "N",
+    E = "E",
+    S = "S",
+    W = "W",
 }
 
 export interface Pos {
