@@ -494,16 +494,13 @@ describe("Mars Kata", () => {
     describe("readFile", () => {
       it("properly reads existing file", async () => {
         const filename = "sol04in.txt";
-        const result = await As.runPromise(Sol4.readFile(filename));
-        expect(result).toBe("sol04 test 1 2 3");
+        const result = await As.runPromiseExit(Sol4.readFile(filename));
+        expect(result).toEqual(As.successExit("sol04 test 1 2 3"));
       });
       it("returns error when file does not exist", async () => {
         const filename = "sol04xx.txt";
         const result = await As.runPromiseExit(Sol4.readFile(filename));
-        expect(result._tag).toBe("Failure");
-        if (result._tag === "Failure") {
-          expect(result.e).toStrictEqual(new Error("todo"));
-        }
+        expect(result).toEqual(As.failExit("TODO"));
       });
     });
   });

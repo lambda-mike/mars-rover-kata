@@ -313,4 +313,6 @@ export const renderTravelOutcome = (t: TravelOutcome): string => {
 
 export declare const parseCommand: (input: string) => E.Either<Error, Command>;
 export declare const parseCommands: (input: string) => E.Either<Error, Array<Command>>;
+// TODO move to infra.ts
 export declare const readFile: (filename: string) => As.IO<Error, string>;
+export declare const readConsole: () => As.IO<Error, string>;
