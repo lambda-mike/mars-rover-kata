@@ -44,6 +44,15 @@ export type TravelOutcome =
     | { kind: "Hit", rover: Rover }
     ;
 
+export interface ReadFileError {
+    filename: string;
+    error: unknown;
+};
+
+export type AppError =
+    | ReadFileError
+    ;
+
 export const mkPlanet =
     (w: number, h: number): E.Either<Error, Planet> =>
         w > 0 && h > 0
@@ -304,8 +313,5 @@ export const renderTravelOutcome = (t: TravelOutcome): string => {
     }
 };
 
-export declare const parseCommand: (input: string) => E.Either<Error, Command>;
-export declare const parseCommands: (input: string) => E.Either<Error, Array<Command>>;
-// TODO move to infra.ts
-export declare const readFile: (filename: string) => As.IO<Error, string>;
-export declare const readConsole: () => As.IO<Error, string>;
+export declare const parseCommand: (input: string) => E.Either<Error, Cmd>;
+export declare const parseCommands: (input: string) => E.Either<Error, Array<Cmd>>;

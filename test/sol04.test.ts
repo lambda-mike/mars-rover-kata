@@ -1,5 +1,8 @@
+import * as path from "node:path"
 import * as As from "@effect-ts/core/Async"
+import * as Ex from "@effect-ts/system/Exit"
 import * as E from "@effect-ts/core/Either"
+import { pipe } from "@effect-ts/core/Function"
 import {
   Cmd,
   Obstacle,
@@ -524,8 +527,13 @@ describe("Mars Kata", () => {
       });
       it("returns error when file does not exist", async () => {
         const filename = "sol04xx.txt";
-        const result = await As.runPromiseExit(readFile(filename));
-        expect(result).toEqual(As.failExit("TODO"));
+        expect(
+          await pipe(
+            readFile(filename),
+            As.mapError((e) => e.filename),
+            As.runPromiseExit,
+          )
+        ).toEqual(As.failExit(filename));
       });
     });
   });
