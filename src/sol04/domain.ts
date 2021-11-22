@@ -28,12 +28,21 @@ export interface Rover {
     readonly orientation: Orientation;
 }
 
-export enum Command {
+export enum Cmd {
     F = "F",
     B = "B",
     L = "L",
     R = "R",
 }
+
+export interface Obstacle {
+    pos: Pos;
+}
+
+export type TravelOutcome =
+    | { kind: "Normal", rover: Rover }
+    | { kind: "Hit", rover: Rover }
+    ;
 
 export const mkPlanet =
     (w: number, h: number): E.Either<Error, Planet> =>
@@ -111,22 +120,6 @@ export const moveBackward = (planet: Planet, rover: Rover): Rover => {
         moveForward(planet, { ...rover, orientation: oppositeDir(rover.orientation) });
     return { ...movedRoverOppositeDir, orientation: rover.orientation };
 };
-
-export enum Cmd {
-    "F",
-    "B",
-    "L",
-    "R",
-}
-
-export interface Obstacle {
-    pos: Pos;
-}
-
-export type TravelOutcome =
-    | { kind: "Normal", rover: Rover }
-    | { kind: "Hit", rover: Rover }
-    ;
 
 export const move = (
     planet: Planet,
