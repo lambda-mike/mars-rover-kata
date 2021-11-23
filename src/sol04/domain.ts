@@ -44,22 +44,25 @@ export type TravelOutcome =
     | { kind: "Hit", rover: Rover }
     ;
 
-// TODO improve errors (make them branded/newtype/etc) so they cannot be replaced with each other
 export interface ReadFileError {
+    kind: "ReadFileError";
     filename: string;
     // TODO remove this field?
     error: unknown;
 };
 
-export interface ParseError {
+export interface ParseCmdError {
+    kind: "ParseCmdError";
     input: string;
-};
-export interface ParseCmdError extends ParseError { }
-export interface ParseCommandsError extends ParseError {
+}
+export interface ParseCommandsError {
+    kind: "ParseCommandsError";
     // TODO change to array of errors
     error: string;
+    input: string;
 }
 
+// TODO remove or extend
 export type AppError =
     | ReadFileError
     ;
@@ -335,7 +338,7 @@ export const parseCommand = (input: string): E.Either<ParseCmdError, Cmd> => {
         case "R":
             return E.right(Cmd.R);
         default:
-            return E.left({ input });
+            return E.left({ kind: "ParseCmdError", input });
     }
 };
 
@@ -344,7 +347,11 @@ export const parseCommands = (input: string): E.Either<ParseCommandsError, Array
         input.split(","),
         A.forEachF(E.Applicative)((x) => parseCommand(x.trim())),
         E.bimap(
-            (err) => ({ input, error: err.input }),
+            (err) => ({
+                kind: "ParseCommandsError",
+                error: err.input,
+                input,
+            }),
             (xs) => [...xs],
         ),
     );

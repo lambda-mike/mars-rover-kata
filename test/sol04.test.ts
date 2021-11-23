@@ -470,7 +470,6 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual("O:1:7:E");
       });
     });
-    // TODO test new fns,
     // TODO simulate errors, etc.
     describe("parseCommand", () => {
       it("properly parses forward cmd", async () => {
@@ -496,7 +495,7 @@ describe("Mars Kata", () => {
       it("returns error given invalid input", async () => {
         const input = "X";
         const result = parseCommand(input);
-        expect(result).toEqual(E.left({ input }));
+        expect(result).toEqual(E.left({ kind: "ParseCmdError", input }));
       });
     });
     describe("parseCommands", () => {
@@ -509,13 +508,25 @@ describe("Mars Kata", () => {
       it("returns error when fails to parse commands", async () => {
         const input = "F,B,X,R,F";
         const result = parseCommands(input);
-        expect(result).toEqual(E.left({ input, error: "X" }));
+        expect(result).toEqual(E.left({
+          kind: "ParseCommandsError",
+          input,
+          error: "X",
+        }));
         const input2 = "F,BR,F";
         const result2 = parseCommands(input2);
-        expect(result2).toEqual(E.left({ input: input2, error: "BR" }));
+        expect(result2).toEqual(E.left({
+          kind: "ParseCommandsError",
+          input: input2,
+          error: "BR",
+        }));
         const input3 = "F,B,";
         const result3 = parseCommands(input3);
-        expect(result3).toEqual(E.left({ input: input3, error: "" }));
+        expect(result3).toEqual(E.left({
+          kind: "ParseCommandsError",
+          input: input3,
+          error: "",
+        }));
       });
     });
     describe("readFile", () => {

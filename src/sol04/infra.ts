@@ -25,6 +25,7 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
         }),
         // TODO log error
         (error): ReadFileError => ({
+            kind: "ReadFileError",
             filename,
             error,
         }),
