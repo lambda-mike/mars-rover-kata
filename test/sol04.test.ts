@@ -502,21 +502,20 @@ describe("Mars Kata", () => {
     describe("parseCommands", () => {
       it("properly parses a few commands", async () => {
         const input = "F,B,L,R,F";
-        const expected = [Cmd.F, Cmd.B, Cmd.L, Cmd.L, Cmd.F];
+        const expected = [Cmd.F, Cmd.B, Cmd.L, Cmd.R, Cmd.F];
         const result = parseCommands(input);
         expect(result).toStrictEqual(E.right(expected));
       });
       it("returns error when fails to parse commands", async () => {
-        const errMsg = (input: string) => `Could not parse commands: ${input}`;
         const input = "F,B,X,R,F";
         const result = parseCommands(input);
-        expect(result).toStrictEqual(E.left(new Error(errMsg(input))));
+        expect(result).toEqual(E.left({ input, error: "X" }));
         const input2 = "F,BR,F";
         const result2 = parseCommands(input2);
-        expect(result2).toStrictEqual(E.left(new Error(errMsg(input2))));
+        expect(result2).toEqual(E.left({ input: input2, error: "BR" }));
         const input3 = "F,B,";
         const result3 = parseCommands(input3);
-        expect(result3).toStrictEqual(E.left(new Error(errMsg(input3))));
+        expect(result3).toEqual(E.left({ input: input3, error: "" }));
       });
     });
     describe("readFile", () => {
