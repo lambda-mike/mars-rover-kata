@@ -46,7 +46,12 @@ export type TravelOutcome =
 
 export interface ReadFileError {
     filename: string;
+    // TODO remove this field?
     error: unknown;
+};
+
+export interface ParseCmdError {
+    input: string;
 };
 
 export type AppError =
@@ -313,5 +318,19 @@ export const renderTravelOutcome = (t: TravelOutcome): string => {
     }
 };
 
-export declare const parseCommand: (input: string) => E.Either<Error, Cmd>;
+export const parseCommand = (input: string): E.Either<ParseCmdError, Cmd> => {
+    switch (input) {
+        case "F":
+            return E.right(Cmd.F);
+        case "B":
+            return E.right(Cmd.B);
+        case "L":
+            return E.right(Cmd.L);
+        case "R":
+            return E.right(Cmd.R);
+        default:
+            return E.left({ input });
+    }
+};
+
 export declare const parseCommands: (input: string) => E.Either<Error, Array<Cmd>>;

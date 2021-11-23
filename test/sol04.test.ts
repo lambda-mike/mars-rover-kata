@@ -496,7 +496,7 @@ describe("Mars Kata", () => {
       it("returns error given invalid input", async () => {
         const input = "X";
         const result = parseCommand(input);
-        expect(result).toStrictEqual(E.left(new Error(`Unknown Command: ${input}`)));
+        expect(result).toEqual(E.left({ input }));
       });
     });
     describe("parseCommands", () => {

@@ -23,6 +23,7 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
                 return resolve(data.trim());
             });
         }),
+        // TODO log error
         (error): ReadFileError => ({
             filename,
             error,
