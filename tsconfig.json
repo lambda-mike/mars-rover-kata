@@ -6,9 +6,10 @@
     "emitDecoratorMetadata": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "outDir": "./dist",
     "paths": {
-      "@app/*": ["src/*"],
-      "@app": ["src"]
+      "@app/*": ["./src/*"],
+      "@app": ["./src"]
     },
     "resolveJsonModule": true,
     "allowJs": false,
@@ -22,5 +23,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }
