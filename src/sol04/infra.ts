@@ -8,6 +8,7 @@ import * as E from "@effect-ts/core/Either"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 import {
+    ReadConsoleError,
     ReadFileError,
 } from "@app/sol04/domain";
 
@@ -31,5 +32,42 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
         }),
     );
 
-export declare const readConsole: () => As.IO<Error, string>;
-  //const rl = readline.createInterface(process.stdin);
+// TODO wrap in Managed so it will close the resource automatically
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    // history: ["\n"],
+    // terminal: true,
+    // removeHistoryDuplicates: true,
+});
+
+export const readConsole =
+    (prompt: string): As.IO<ReadConsoleError, string> =>
+        As.promise(
+            () => new Promise((resolve, reject) => {
+                rl.question(prompt, (answer: string) => {
+                    if (answer.includes('X')) reject('X');
+                    rl.close();
+                    return resolve(answer);
+                });
+            }),
+            (err): ReadConsoleError => ({
+                kind: "ReadConsoleError",
+                error: err,
+            }));
+//const rl = readline.createInterface(process.stdin);
+
+// TODO add infra object
+
+const log =
+    (...args: unknown[]): As.UIO<void> =>
+        As.succeedWith(() => console.log(...args));
+
+const error =
+    (...args: unknown[]): As.UIO<void> =>
+        As.succeedWith(() => console.error(...args));
+
+export const logger = {
+    log,
+    error,
+}

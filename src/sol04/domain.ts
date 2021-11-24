@@ -62,6 +62,11 @@ export interface ParseCommandsError {
     input: string;
 }
 
+export interface ReadConsoleError {
+    kind: "ReadConsoleError";
+    error: unknown;
+};
+
 // TODO remove or extend
 export type AppError =
     | ReadFileError
