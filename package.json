@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "build": "pnpm exec tsc --build --verbose",
+    "test": "jest",
+    "app": "node dist/src/sol04/app.js"
   },
   "repository": {
     "type": "git",
