@@ -531,7 +531,7 @@ describe("Mars Kata", () => {
     });
     describe("readFile", () => {
       it("properly reads existing file", async () => {
-        const filename = "sol04in.txt";
+        const filename = "solIn.txt";
         const result = await As.runPromiseExit(readFile(filename));
         expect(result).toEqual(As.successExit("sol04 test 1 2 3"));
       });

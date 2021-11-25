@@ -26,14 +26,14 @@ import {
   parseRover,
   renderTravelOutcome,
   travel,
-} from "../src/sol04/domain";
+} from "../src/sol05/domain";
 import {
   readConsole,
   readFile,
-} from "../src/sol04/infra";
+} from "../src/sol05/infra";
 
 describe("Mars Kata", () => {
-  describe("Sol04", () => {
+  describe("Sol05", () => {
     describe("mkPlanet", () => {
       it("should create the planet given correct size", async () => {
         const w = 3;
@@ -531,12 +531,12 @@ describe("Mars Kata", () => {
     });
     describe("readFile", () => {
       it("properly reads existing file", async () => {
-        const filename = "sol04in.txt";
+        const filename = "solIn.txt";
         const result = await As.runPromiseExit(readFile(filename));
         expect(result).toEqual(As.successExit("sol04 test 1 2 3"));
       });
       it("returns error when file does not exist", async () => {
-        const filename = "sol04xx.txt";
+        const filename = "solxx.txt";
         expect(
           await pipe(
             readFile(filename),

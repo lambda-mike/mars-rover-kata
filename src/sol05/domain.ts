@@ -72,6 +72,11 @@ export type AppError =
     | ReadFileError
     ;
 
+export interface Environment {
+    planetFile: string;
+    roverFile: string;
+}
+
 export const mkPlanet =
     (w: number, h: number): E.Either<Error, Planet> =>
         w > 0 && h > 0
