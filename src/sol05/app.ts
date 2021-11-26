@@ -10,6 +10,9 @@ import {
     Config,
     Environment,
     Logger,
+    parseObstacles,
+    parsePlanet,
+    parseRover,
 } from "./domain";
 
 // TODO Write unit tests for the app - should be able to mock what we want and test errors, etc.
@@ -23,10 +26,18 @@ const app = As.gen(function*(_) {
     // TODO remove after debugging
     yield* _(logger.log("[DBG]", planetStr, roverStr));
 
-    // TODO split planet
-    // TODO parse planet
-    // TODO parse obstacles
-    // TODO parse rover
+    const planetTuple = planetStr.split("\n");
+    if (planetTuple.length < 2) {
+        yield* _(As.fail(new Error("Planet tuple input has less than 2 inputs!")));
+    }
+    const planet = yield* _(As.fromEither(parsePlanet(planetTuple[0])));
+    yield* _(logger.log("Planet", planet));
+
+    const obstacles = yield* _(As.fromEither(parseObstacles(planetTuple[1])));
+    yield* _(logger.log("Obstacles", obstacles));
+
+    const rover = yield* _(As.fromEither(parseRover(roverStr)));
+    yield* _(logger.log("Rover", rover));
 
     yield* _(logger.log("Welcome to Mars, Rover!"));
     const cmds = yield* _(readConsole("Please, enter commands for the Rover in 'F,B,R,L' format: "));
