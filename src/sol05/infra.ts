@@ -8,9 +8,10 @@ import * as E from "@effect-ts/core/Either"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 import {
+    Logger,
     ReadConsoleError,
     ReadFileError,
-} from "@app/sol04/domain";
+} from "@app/sol05/domain";
 
 // TODO accept Logging Service replace console.log with service
 export const readFile = (filename: string): As.IO<ReadFileError, string> =>
@@ -46,6 +47,7 @@ export const readConsole =
         As.promise(
             () => new Promise((resolve, reject) => {
                 rl.question(prompt, (answer: string) => {
+                    // fatal error simulation
                     if (answer.includes('X')) reject('X');
                     rl.close();
                     return resolve(answer);
@@ -67,7 +69,7 @@ const error =
     (...args: unknown[]): As.UIO<void> =>
         As.succeedWith(() => console.error(...args));
 
-export const logger = {
+export const getLogger = (): Logger => ({
     log,
     error,
-}
+});

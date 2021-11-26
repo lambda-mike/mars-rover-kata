@@ -72,9 +72,21 @@ export type AppError =
     | ReadFileError
     ;
 
-export interface Environment {
+export interface Config {
     planetFile: string;
     roverFile: string;
+}
+
+export interface Logger {
+    log: (...args: unknown[]) => As.UIO<void>;
+    error: (...args: unknown[]) => As.UIO<void>;
+}
+
+// TODO accept services
+export interface Environment {
+    // TODO change to return effect, because reading config might fail
+    getConfig: () => Config;
+    getLogger: () => Logger;
 }
 
 export const mkPlanet =
