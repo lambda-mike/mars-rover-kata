@@ -8,9 +8,10 @@ import {
     parsePlanet,
     parseRover,
     travel,
+    TravelOutcome,
 } from "./domain";
 
-type App = As.Async<Environment, AppError, void>;
+type App = As.Async<Environment, AppError, TravelOutcome>;
 
 export const app: App = As.gen(function*(_) {
     const config = yield* _(As.access((env: Environment) => env.getConfig()));
