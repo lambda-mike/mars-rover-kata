@@ -47,7 +47,6 @@ export type TravelOutcome =
 export interface ReadFileError {
     kind: "ReadFileError";
     filename: string;
-    // TODO remove this field?
     error: unknown;
 };
 
@@ -57,7 +56,6 @@ export interface ParseCmdError {
 }
 export interface ParseCommandsError {
     kind: "ParseCommandsError";
-    // TODO change to array of errors
     error: string;
     input: string;
 }
@@ -67,8 +65,11 @@ export interface ReadConsoleError {
     error: unknown;
 };
 
-// TODO remove or extend
 export type AppError =
+    | Error
+    | ReadonlyArray<Error>
+    | ParseCommandsError
+    | ReadConsoleError
     | ReadFileError
     ;
 

@@ -1,6 +1,7 @@
 import * as As from "@effect-ts/core/Async"
 import { pipe } from "@effect-ts/core/Function"
 import {
+    AppError,
     Environment,
     parseCommands,
     parseObstacles,
@@ -9,8 +10,9 @@ import {
     travel,
 } from "./domain";
 
-// TODO Write unit tests for the app - should be able to mock what we want and test errors, etc.
-export const app = As.gen(function*(_) {
+type App = As.Async<Environment, AppError, void>;
+
+export const app: App = As.gen(function*(_) {
     const config = yield* _(As.access((env: Environment) => env.getConfig()));
     const logger = yield* _(As.access((env: Environment) => env.getLogger()));
     const readFile = yield* _(As.access((env: Environment) => env.readFile));
