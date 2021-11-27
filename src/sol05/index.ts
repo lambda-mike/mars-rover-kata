@@ -20,7 +20,7 @@ const main = (): Promise<void> => {
     const env = {
         getConfig: () => config,
         getLogger,
-        // TODO add console,
+        readFile,
         // TODO add readFile,
     };
     return pipe(

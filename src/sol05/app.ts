@@ -3,7 +3,6 @@ import { pipe } from "@effect-ts/core/Function"
 import {
     // TODO move to env !!!
     readConsole,
-    readFile,
 } from "./infra";
 import {
     Environment,
@@ -18,6 +17,7 @@ import {
 export const app = As.gen(function*(_) {
     const config = yield* _(As.access((env: Environment) => env.getConfig()));
     const logger = yield* _(As.access((env: Environment) => env.getLogger()));
+    const readFile = yield* _(As.access((env: Environment) => env.readFile));
     // TODO replace with writeConsole !!
     yield* _(logger.log("Welcome to Mars, Rover!"));
 
