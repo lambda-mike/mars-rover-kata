@@ -3,6 +3,9 @@ import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
 import {
   Cmd,
+  Config,
+  Environment,
+  Logger,
   Obstacle,
   Orientation,
   Planet,
@@ -28,6 +31,7 @@ import {
 import {
   readFile,
 } from "../src/sol05/infra";
+import { app } from "../src/sol05/app";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -547,6 +551,84 @@ describe("Mars Kata", () => {
         );
         expect(result).toEqual(As.failExit(filename));
         console.log("Test end");
+      });
+    });
+  });
+  describe("Sol05", () => {
+    describe("app", () => {
+      it("make proper calls for happy path", async () => {
+        const cmds = "F,B,L,R,F";
+        const config: Config = {
+          planetFile: "planet.txt",
+          roverFile: "rover.txt",
+        };
+        const logMock = {
+          error: [] as unknown[],
+          log: [] as unknown[],
+          warn: [] as unknown[],
+        };
+        const consoleMock: Array<string> = [];
+        const promptMock: Array<string> = [];
+
+        const getLogger = (): Logger => ({
+          error: jest.fn((...args: unknown[]) =>
+            As.succeedWith(() => {
+              logMock.error.push([...args]);
+            })),
+          log: jest.fn((...args: unknown[]) =>
+            As.succeedWith(() => {
+              logMock.log.push([...args]);
+            })),
+          warn: jest.fn((...args: unknown[]) =>
+            As.succeedWith(() => {
+              logMock.warn.push([...args]);
+            })),
+        });
+        const readFileMock = jest.fn((filename: string) =>
+          As.succeedWith(() =>
+            filename === config.planetFile
+              ? "5x4\n1,2 0,0 3,4"
+              : "1,3:W"));
+        const readConsole = jest.fn((prompt: string) =>
+          As.succeedWith(() => {
+            promptMock.push(prompt);
+            return cmds;
+          }));
+        const writeConsole = jest.fn((s: string) => As.succeedWith(() => consoleMock.push(s)));
+        const env: Environment = {
+          getConfig: () => config,
+          getLogger,
+          readFile: readFileMock,
+          readConsole,
+          writeConsole,
+        };
+
+        const result = await pipe(
+          app,
+          As.provideAll(env),
+          As.runPromise,
+        );
+
+        expect(result).toStrictEqual({
+          kind: "Normal",
+          rover: {
+            orientation: "W",
+            x: 0,
+            y: 3,
+          },
+        });
+        expect(consoleMock).toStrictEqual(['Welcome to Mars, Rover!']);
+        expect(promptMock).toStrictEqual(["Please, enter commands for the Rover in 'F,B,R,L' format: "]);
+        expect(logMock).toStrictEqual({
+          log: [
+            ["Planet", { width: 5, height: 4 }],
+            ["Obstacles", [{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]],
+            ["Rover", { x: 1, y: 3, orientation: 'W' }],
+            ["Rover is executing commands: F,B,L,R,F"],
+          ],
+          error: [],
+          warn: [],
+        });
       });
     });
   });

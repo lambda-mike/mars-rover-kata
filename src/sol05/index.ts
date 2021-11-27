@@ -27,6 +27,7 @@ const main = (): Promise<void> => {
     };
     return pipe(
         app,
+        // TODO move that logic inside app
         As.fold(
             (err) => console.error("Mission failed:", err),
             (outcome) => {
