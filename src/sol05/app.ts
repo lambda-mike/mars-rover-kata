@@ -12,7 +12,7 @@ import {
 // TODO Write unit tests for the app - should be able to mock what we want and test errors, etc.
 export const app = As.gen(function*(_) {
     const config = yield* _(As.access((env: Environment) => env.getConfig()));
-    // const logger = yield* _(As.access((env: Environment) => env.getLogger()));
+    const logger = yield* _(As.access((env: Environment) => env.getLogger()));
     const readFile = yield* _(As.access((env: Environment) => env.readFile));
     const readConsole = yield* _(As.access((env: Environment) => env.readConsole));
     const writeConsole = yield* _(As.access((env: Environment) => env.writeConsole));
@@ -28,16 +28,16 @@ export const app = As.gen(function*(_) {
         yield* _(As.fail(new Error("Planet tuple input has less than 2 inputs!")));
     }
     const planet = yield* _(As.fromEither(parsePlanet(planetTuple[0])));
-    // yield* _(logger.log("Planet", planet));
+    yield* _(logger.log("Planet", planet));
     const obstacles = yield* _(As.fromEither(parseObstacles(planetTuple[1])));
-    // yield* _(logger.log("Obstacles", obstacles));
+    yield* _(logger.log("Obstacles", obstacles));
 
     const rover = yield* _(As.fromEither(parseRover(roverStr)));
-    // yield* _(logger.log("Rover", rover));
+    yield* _(logger.log("Rover", rover));
 
     const cmdsStr = yield* _(readConsole("Please, enter commands for the Rover in 'F,B,R,L' format: "));
     const cmds = yield* _(parseCommands(cmdsStr));
-    // yield* _(logger.log(`Rover is executing commands: ${cmds}`));
+    yield* _(logger.log(`Rover is executing commands: ${cmds}`));
 
     return yield* _(As.succeed(travel(planet, rover, obstacles, cmds)));
 });

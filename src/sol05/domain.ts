@@ -285,6 +285,7 @@ export const parseOrientation = (input: string): E.Either<Error, Orientation> =>
     }
 };
 
+// TODO export different fns and benchmark in Jest
 // Classic
 /*
 export const parseRover = (input: string): E.Either<Error, Rover> => {

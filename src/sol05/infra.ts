@@ -1,12 +1,7 @@
 import * as fs from "node:fs"
-import * as path from "node:path"
 import * as readline from "node:readline"
 import * as process from "node:process"
-import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as As from "@effect-ts/core/Async"
-import * as E from "@effect-ts/core/Either"
-import { makeAssociative } from "@effect-ts/core/Associative"
-import { pipe, flow } from "@effect-ts/core/Function"
 import {
     Logger,
     ReadConsoleError,
@@ -59,17 +54,18 @@ export const writeConsole =
     (s: string): As.UIO<void> =>
         As.succeedWith(() => console.log(s));
 
+// TODO Write logs to stderr instead ?
 const log =
     (...args: unknown[]): As.UIO<void> =>
-        As.succeedWith(() => console.log(...args));
+        As.succeedWith(() => console.log("[LOG]", ...args));
 
 const error =
     (...args: unknown[]): As.UIO<void> =>
-        As.succeedWith(() => console.error(...args));
+        As.succeedWith(() => console.error("[ERR]", ...args));
 
 const warn =
     (...args: unknown[]): As.UIO<void> =>
-        As.succeedWith(() => console.warn(...args));
+        As.succeedWith(() => console.warn("[WARN]", ...args));
 
 export const getLogger = (): Logger => ({
     error,
