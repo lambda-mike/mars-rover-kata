@@ -28,16 +28,14 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
         }),
     );
 
-// TODO wrap in Managed so it will close the resource automatically
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
-
 export const readConsole =
     (prompt: string): As.IO<ReadConsoleError, string> =>
         As.promise(
             () => new Promise((resolve, reject) => {
+                const rl = readline.createInterface({
+                    input: process.stdin,
+                    output: process.stdout,
+                });
                 rl.question(prompt, (answer: string) => {
                     // fatal error simulation
                     if (answer.includes('X')) reject('X');
@@ -54,7 +52,6 @@ export const writeConsole =
     (s: string): As.UIO<void> =>
         As.succeedWith(() => console.log(s));
 
-// TODO Write logs to stderr instead ?
 const log =
     (...args: unknown[]): As.UIO<void> =>
         As.succeedWith(() => console.log("[LOG]", ...args));

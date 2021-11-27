@@ -45,7 +45,7 @@ const main = (): Promise<void> => {
     try {
         await main();
     } catch (err) {
-        console.error("Unexpected error captured: ", err)
+        console.error("Unexpected error captured:", err)
     } finally {
         process.exit(0);
     }
