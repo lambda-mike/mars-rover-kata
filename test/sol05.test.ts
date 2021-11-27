@@ -1,6 +1,4 @@
-import * as path from "node:path"
 import * as As from "@effect-ts/core/Async"
-import * as Ex from "@effect-ts/system/Exit"
 import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
 import {
@@ -28,7 +26,6 @@ import {
   travel,
 } from "../src/sol05/domain";
 import {
-  readConsole,
   readFile,
 } from "../src/sol05/infra";
 
