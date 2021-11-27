@@ -1,5 +1,4 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
-import * as As from "@effect-ts/core/Async"
 import * as E from "@effect-ts/core/Either"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
@@ -47,7 +46,6 @@ export type TravelOutcome =
 export interface ReadFileError {
     kind: "ReadFileError";
     filename: string;
-    // TODO remove this field?
     error: unknown;
 };
 
@@ -57,7 +55,6 @@ export interface ParseCmdError {
 }
 export interface ParseCommandsError {
     kind: "ParseCommandsError";
-    // TODO change to array of errors
     error: string;
     input: string;
 }
@@ -66,11 +63,6 @@ export interface ReadConsoleError {
     kind: "ReadConsoleError";
     error: unknown;
 };
-
-// TODO remove or extend
-export type AppError =
-    | ReadFileError
-    ;
 
 export const mkPlanet =
     (w: number, h: number): E.Either<Error, Planet> =>
