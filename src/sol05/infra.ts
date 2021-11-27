@@ -15,9 +15,9 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
             fs.readFile(filename, 'utf8', (err, data) => {
                 if (err) {
                     //console.error("[readFile]", err, JSON.stringify(err));
-                    reject(err);
+                    return reject(err);
                 }
-                resolve(data.trim());
+                return resolve(data.trim());
             });
         }),
         // TODO log error
