@@ -3,7 +3,7 @@ import { Orientation } from "../src/sol01/api";
 import * as Sol3 from "../src/sol03/domain";
 
 describe("Mars Kata", () => {
-  describe("Sol03", () => {
+  describe("Sol01", () => {
     describe("mkPlanet", () => {
       it("should create the planet given correct size", async () => {
         const w = 3;
@@ -244,6 +244,8 @@ describe("Mars Kata", () => {
         expect(result.orientation).toBe(dir);
       });
     });
+  });
+  describe("Sol02", () => {
     describe("move", () => {
       const mars: Sol3.Planet = { width: 3, height: 4 };
       const x = 1;
@@ -342,6 +344,8 @@ describe("Mars Kata", () => {
         expect(result.rover.orientation).toBe(Sol3.Orientation.N);
       });
     });
+  });
+  describe("Sol03", () => {
     describe("parsePlanet", () => {
       it("should parse correct input", async () => {
         const result = Sol3.parsePlanet("5x4");

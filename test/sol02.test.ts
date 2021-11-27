@@ -2,7 +2,7 @@ import { Orientation } from "../src/sol01/api";
 import * as Sol2 from "../src/sol02/domain";
 
 describe("Mars Kata", () => {
-  describe("Sol02", () => {
+  describe("Sol01", () => {
     describe("mkPlanet", () => {
       it("should create the planet", async () => {
         const w = 3;
@@ -233,6 +233,8 @@ describe("Mars Kata", () => {
         expect(result.orientation).toBe(dir);
       });
     });
+  });
+  describe("Sol02", () => {
     describe("move", () => {
       const mars = Sol2.mkPlanet(3, 4);
       const x = 1;

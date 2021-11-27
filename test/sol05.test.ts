@@ -30,7 +30,7 @@ import {
 } from "../src/sol05/infra";
 
 describe("Mars Kata", () => {
-  describe("Sol05", () => {
+  describe("Sol01", () => {
     describe("mkPlanet", () => {
       it("should create the planet given correct size", async () => {
         const w = 3;
@@ -271,6 +271,8 @@ describe("Mars Kata", () => {
         expect(result.orientation).toBe(dir);
       });
     });
+  });
+  describe("Sol02", () => {
     describe("move", () => {
       const mars: Planet = { width: 3, height: 4 };
       const x = 1;
@@ -369,6 +371,8 @@ describe("Mars Kata", () => {
         expect(result.rover.orientation).toBe(Orientation.N);
       });
     });
+  });
+  describe("Sol03", () => {
     describe("parsePlanet", () => {
       it("should parse correct input", async () => {
         const result = parsePlanet("5x4");
@@ -467,7 +471,8 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual("O:1:7:E");
       });
     });
-    // TODO simulate errors, etc.
+  });
+  describe("Sol04", () => {
     describe("parseCommand", () => {
       it("properly parses forward cmd", async () => {
         const input = "F";
