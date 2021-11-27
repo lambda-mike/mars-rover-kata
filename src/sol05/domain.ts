@@ -83,12 +83,13 @@ export interface Logger {
     warn: (...args: unknown[]) => As.UIO<void>;
 }
 
-// TODO accept services
 export interface Environment {
     // TODO change to return effect, because reading config might fail
     getConfig: () => Config;
     getLogger: () => Logger;
     readFile: (filename: string) => As.IO<ReadFileError, string>;
+    readConsole: (prompt: string) => As.IO<ReadConsoleError, string>;
+    writeConsole: (s: string) => As.UIO<void>;
 }
 
 export const mkPlanet =

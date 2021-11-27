@@ -1,10 +1,6 @@
 import * as As from "@effect-ts/core/Async"
 import { pipe } from "@effect-ts/core/Function"
 import {
-    // TODO move to env !!!
-    readConsole,
-} from "./infra";
-import {
     Environment,
     parseCommands,
     parseObstacles,
@@ -16,10 +12,12 @@ import {
 // TODO Write unit tests for the app - should be able to mock what we want and test errors, etc.
 export const app = As.gen(function*(_) {
     const config = yield* _(As.access((env: Environment) => env.getConfig()));
-    const logger = yield* _(As.access((env: Environment) => env.getLogger()));
+    // const logger = yield* _(As.access((env: Environment) => env.getLogger()));
     const readFile = yield* _(As.access((env: Environment) => env.readFile));
-    // TODO replace with writeConsole !!
-    yield* _(logger.log("Welcome to Mars, Rover!"));
+    const readConsole = yield* _(As.access((env: Environment) => env.readConsole));
+    const writeConsole = yield* _(As.access((env: Environment) => env.writeConsole));
+
+    yield* _(writeConsole("Welcome to Mars, Rover!"));
 
     const [planetStr, roverStr] = yield* _(pipe(
         readFile(config.planetFile),

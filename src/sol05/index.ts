@@ -9,6 +9,7 @@ import {
     getLogger,
     readConsole,
     readFile,
+    writeConsole,
 } from "./infra";
 import { app } from "./app";
 
@@ -21,7 +22,8 @@ const main = (): Promise<void> => {
         getConfig: () => config,
         getLogger,
         readFile,
-        // TODO add readFile,
+        readConsole,
+        writeConsole,
     };
     return pipe(
         app,

@@ -37,9 +37,6 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    // history: ["\n"],
-    // terminal: true,
-    // removeHistoryDuplicates: true,
 });
 
 export const readConsole =
