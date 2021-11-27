@@ -78,8 +78,9 @@ export interface Config {
 }
 
 export interface Logger {
-    log: (...args: unknown[]) => As.UIO<void>;
     error: (...args: unknown[]) => As.UIO<void>;
+    log: (...args: unknown[]) => As.UIO<void>;
+    warn: (...args: unknown[]) => As.UIO<void>;
 }
 
 // TODO accept services
@@ -169,7 +170,7 @@ export const moveBackward = (planet: Planet, rover: Rover): Rover => {
 export const move = (
     planet: Planet,
     rover: Rover,
-    obstacles: Array<Obstacle>,
+    obstacles: ReadonlyArray<Obstacle>,
     cmd: Cmd
 ): TravelOutcome => {
     const hasHitObstacle = (r: Rover): boolean =>
@@ -200,7 +201,7 @@ export const move = (
 export const travel = (
     planet: Planet,
     rover: Rover,
-    obstacles: Array<Obstacle>,
+    obstacles: ReadonlyArray<Obstacle>,
     cmds: Array<Cmd>,
 ): TravelOutcome => {
     let moveResult: TravelOutcome = { kind: "Normal", rover: { ...rover } };

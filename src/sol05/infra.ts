@@ -20,9 +20,9 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
             fs.readFile(filename, 'utf8', (err, data) => {
                 if (err) {
                     //console.error("[readFile]", err, JSON.stringify(err));
-                    return reject(err);
+                    reject(err);
                 }
-                return resolve(data.trim());
+                resolve(data.trim());
             });
         }),
         // TODO log error
@@ -57,9 +57,10 @@ export const readConsole =
                 kind: "ReadConsoleError",
                 error: err,
             }));
-//const rl = readline.createInterface(process.stdin);
 
-// TODO add infra object
+export const writeConsole =
+    (s: string): As.UIO<void> =>
+        As.succeedWith(() => console.log(s));
 
 const log =
     (...args: unknown[]): As.UIO<void> =>
@@ -69,7 +70,12 @@ const error =
     (...args: unknown[]): As.UIO<void> =>
         As.succeedWith(() => console.error(...args));
 
+const warn =
+    (...args: unknown[]): As.UIO<void> =>
+        As.succeedWith(() => console.warn(...args));
+
 export const getLogger = (): Logger => ({
-    log,
     error,
+    log,
+    warn,
 });
