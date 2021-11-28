@@ -1,6 +1,7 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as As from "@effect-ts/core/Async"
 import * as E from "@effect-ts/core/Either"
+import * as TP from "@effect-ts/core/Collections/Immutable/Tuple"
 import { makeAssociative } from "@effect-ts/core/Associative"
 import { pipe, flow } from "@effect-ts/core/Function"
 
@@ -286,10 +287,7 @@ export const parseOrientation = (input: string): E.Either<Error, Orientation> =>
     }
 };
 
-// TODO export different fns and benchmark in Jest
-// Classic
-/*
-export const parseRover = (input: string): E.Either<Error, Rover> => {
+export const parseRoverClassic = (input: string): E.Either<Error, Rover> => {
     const posAndDirStr = input.split(":");
     if (posAndDirStr.length !== 2) {
         return E.left(new Error("Wrong rover input string format!"));
@@ -305,12 +303,9 @@ export const parseRover = (input: string): E.Either<Error, Rover> => {
         )),
     );
 };
-*/
 
 // E.gen
-/*
-*/
-export const parseRover = (input: string): E.Either<Error, Rover> => {
+export const parseRoverGen = (input: string): E.Either<Error, Rover> => {
     const posAndDirStr = input.split(":");
     return E.gen(function*(_) {
         if (posAndDirStr.length !== 2) {
@@ -323,8 +318,7 @@ export const parseRover = (input: string): E.Either<Error, Rover> => {
 };
 
 // E.do
-/*
-export const parseRover = (input: string): E.Either<Error, Rover> => {
+export const parseRoverDo = (input: string): E.Either<Error, Rover> => {
     const posAndDirStr = input.split(":");
     return pipe(
         E.do,
@@ -341,7 +335,8 @@ export const parseRover = (input: string): E.Either<Error, Rover> => {
             ({ x: pos[0], y: pos[1], orientation })),
     );
 };
-*/
+
+export const parseRover = parseRoverGen;
 
 export const renderTravelOutcome = (t: TravelOutcome): string => {
     const roverStr =

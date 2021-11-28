@@ -1,3 +1,4 @@
+import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as As from "@effect-ts/core/Async"
 import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
@@ -25,6 +26,9 @@ import {
   parseOrientation,
   parsePlanet,
   parseRover,
+  parseRoverClassic,
+  parseRoverDo,
+  parseRoverGen,
   ReadFileError,
   renderTravelOutcome,
   travel,
@@ -464,6 +468,31 @@ describe("Mars Kata", () => {
         expect(result3).toStrictEqual(E.left(new Error("Wrong numbers pair string format!")));
       });
     });
+    describe("parseRover benchmarks", () => {
+      const n = 100000;
+      const input = "1,2:W";
+      it("parseRoverClassic", async () => {
+        expect(pipe(
+          A.replicate_(n, input),
+          A.forEachF(E.Applicative)((x) => parseRoverClassic(x)),
+          E.isRight,
+        )).toBeTruthy();
+      });
+      it("parseRoverDo", async () => {
+        expect(pipe(
+          A.replicate_(n, input),
+          A.forEachF(E.Applicative)((x) => parseRoverDo(x)),
+          E.isRight,
+        )).toBeTruthy();
+      });
+      it("parseRoverGen", async () => {
+        expect(pipe(
+          A.replicate_(n, input),
+          A.forEachF(E.Applicative)((x) => parseRoverGen(x)),
+          E.isRight,
+        )).toBeTruthy();
+      });
+    });
     describe("renderTravelOutcome", () => {
       it("should return correct srting for the Normal outcome", async () => {
         const outcome: TravelOutcome = { kind: "Normal", rover: { x: 3, y: 8, orientation: Orientation.N } };
@@ -544,14 +573,12 @@ describe("Mars Kata", () => {
       });
       it("returns error when file does not exist", async () => {
         const filename = "solxx.txt";
-        console.log("Test");
         const result = await pipe(
           readFile(filename),
           As.mapError((e) => e.filename),
           As.runPromiseExit,
         );
         expect(result).toEqual(As.failExit(filename));
-        console.log("Test end");
       });
     });
   });
