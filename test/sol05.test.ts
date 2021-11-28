@@ -25,6 +25,7 @@ import {
   parseOrientation,
   parsePlanet,
   parseRover,
+  ReadFileError,
   renderTravelOutcome,
   travel,
 } from "../src/sol05/domain";
@@ -630,6 +631,69 @@ describe("Mars Kata", () => {
             ["Rover", { x: 1, y: 3, orientation: "W" }],
             ["Rover is executing commands: F,B,L,R,F"],
           ],
+          error: [],
+          warn: [],
+        });
+      });
+      it("handles wrong planetFile error", async () => {
+        const config: Config = {
+          planetFile: "nope.txt",
+          roverFile: "rover.txt",
+        };
+        const logMock = {
+          error: [] as unknown[],
+          log: [] as unknown[],
+          warn: [] as unknown[],
+        };
+        const consoleMock: Array<string> = [];
+        const promptMock: Array<string> = [];
+
+        const getLogger = (): Logger => ({
+          error: jest.fn((...args: unknown[]) =>
+            As.succeedWith(() => {
+              logMock.error.push([...args]);
+            })),
+          log: jest.fn((...args: unknown[]) =>
+            As.succeedWith(() => {
+              logMock.log.push([...args]);
+            })),
+          warn: jest.fn((...args: unknown[]) =>
+            As.succeedWith(() => {
+              logMock.warn.push([...args]);
+            })),
+        });
+        const readFileErr = (filename: string): ReadFileError => ({
+          kind: "ReadFileError",
+          filename,
+          error: null,
+        });
+        const readFileMock = jest.fn((f: string) =>
+          As.fail(readFileErr(f)));
+        const readConsole = jest.fn((prompt: string) =>
+          As.succeedWith(() => {
+            promptMock.push(prompt);
+            return "";
+          }));
+        const writeConsole = jest.fn((s: string) => As.succeedWith(() => consoleMock.push(s)));
+        const env: Environment = {
+          getConfig: () => config,
+          getLogger,
+          readFile: readFileMock,
+          readConsole,
+          writeConsole,
+        };
+
+        const result = await pipe(
+          app,
+          As.provideAll(env),
+          As.runPromiseExit,
+        );
+
+        expect(result).toStrictEqual(As.failExit(readFileErr(config.planetFile)));
+        expect(consoleMock).toStrictEqual(["Welcome to Mars, Rover!"]);
+        expect(promptMock).toStrictEqual([]);
+        expect(logMock).toStrictEqual({
+          log: [],
           error: [],
           warn: [],
         });
