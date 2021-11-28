@@ -6,7 +6,7 @@ import {
     Logger,
     ReadConsoleError,
     ReadFileError,
-} from "@app/sol05/domain";
+} from "./domain";
 
 // TODO accept Logging Service replace console.log with service
 export const readFile = (filename: string): As.IO<ReadFileError, string> =>
