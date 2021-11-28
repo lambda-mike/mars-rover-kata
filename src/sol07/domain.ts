@@ -71,11 +71,26 @@ export interface PlanetConstructionError {
     msg: string;
 };
 
+export interface RoverCosntructionError {
+    kind: "RoverCosntructionError";
+    msg: string;
+};
+
+export type ParseNumPairError =
+    | "PNPWrongInputStringError"
+    | "PNPWrongNumbersCountError"
+    | "PNPUnknownError"
+    ;
+
+
 export type AppError =
+    // TODO wrap in custom type
     | ReadonlyArray<Error>
     | ParseCommandsError
     | ReadConsoleError
     | ReadFileError
+    | PlanetConstructionError
+    | RoverCosntructionError
     ;
 
 export interface Config {
@@ -99,13 +114,13 @@ export interface Environment {
 }
 
 export const mkPlanet =
-    (w: number, h: number): E.Either<Error, Planet> =>
+    (w: number, h: number): E.Either<PlanetConstructionError, Planet> =>
         w > 0 && h > 0
             ? E.right({ width: w, height: h })
-            : E.left(new Error("width and height must be positive numbers!"));
+            : E.left({ kind: "PlanetConstructionError", msg: "width and height must be positive numbers!" });
 
 export const mkRover =
-    (x: number, y: number, dir: Orientation): E.Either<Error, Rover> =>
+    (x: number, y: number, dir: Orientation): E.Either<RoverCosntructionError, Rover> =>
         x >= 0 && y >= 0
             ? E.right({
                 x,
@@ -222,14 +237,14 @@ export const travel = (
     return moveResult;
 };
 
-const parseNumPair = (sep: string) => (input: string): E.Either<Error, [number, number]> => {
+const parseNumPair = (sep: string) => (input: string): E.Either<ParseNumPairError, [number, number]> => {
     const regex = new RegExp(`^\\d+${sep}\\d+$`);
     if (!regex.test(input)) {
-        return E.left(new Error("Wrong numbers pair string format!"));
+        return E.left("PNPWrongInputStringError");
     }
     const nums = input.split(`${sep}`);
     if (nums.length !== 2) {
-        return E.left(new Error("There should only be two numbers in the input string!"));
+        return E.left("PNPWrongNumbersCountError");
     }
     const [num1Str, num2Str] = nums;
     try {
@@ -239,7 +254,7 @@ const parseNumPair = (sep: string) => (input: string): E.Either<Error, [number, 
     }
     catch (_) {
         console.error("[parseNumPair]", JSON.stringify(_));
-        return E.left(new Error("parseInt failed!"));
+        return E.left("PNPUnknownError");
     }
 };
 
