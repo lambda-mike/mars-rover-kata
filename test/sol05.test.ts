@@ -617,13 +617,17 @@ describe("Mars Kata", () => {
             y: 3,
           },
         });
-        expect(consoleMock).toStrictEqual(['Welcome to Mars, Rover!']);
+        expect(consoleMock).toStrictEqual([
+          "Welcome to Mars, Rover!",
+          "Rover position: 0:3:W",
+          "Mission completed!",
+        ]);
         expect(promptMock).toStrictEqual(["Please, enter commands for the Rover in 'F,B,R,L' format: "]);
         expect(logMock).toStrictEqual({
           log: [
             ["Planet", { width: 5, height: 4 }],
             ["Obstacles", [{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]],
-            ["Rover", { x: 1, y: 3, orientation: 'W' }],
+            ["Rover", { x: 1, y: 3, orientation: "W" }],
             ["Rover is executing commands: F,B,L,R,F"],
           ],
           error: [],
