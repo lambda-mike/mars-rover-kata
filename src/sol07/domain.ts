@@ -82,6 +82,11 @@ export type ParseNumPairError =
     | "PNPUnknownError"
     ;
 
+export type ParsePlanetError =
+    | { kind: "PPEParseNumPairError", error: ParseNumPairError }
+    | "PPNegativeSizeError"
+    ;
+
 
 export type AppError =
     // TODO wrap in custom type
@@ -258,12 +263,13 @@ const parseNumPair = (sep: string) => (input: string): E.Either<ParseNumPairErro
     }
 };
 
-export const parsePlanet = (input: string): E.Either<Error, Planet> => pipe(
+export const parsePlanet = (input: string): E.Either<ParsePlanetError, Planet> => pipe(
     input,
     parseNumPair("x"),
+    E.mapLeft((error) => ({ error, kind: "PPEParseNumPairError" as const })),
     E.chain(([width, height]) => {
         if (width <= 0 || height <= 0) {
-            return E.left(new Error("Size of the planet must be positive!"));
+            return E.left("PPNegativeSizeError" as const);
         }
         return E.right({ width, height });
     }),
