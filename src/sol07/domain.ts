@@ -1,5 +1,5 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
-import * as As from "@effect-ts/core/Async"
+import * as T from "@effect-ts/core/Effect"
 import * as E from "@effect-ts/core/Either"
 import * as TP from "@effect-ts/core/Collections/Immutable/Tuple"
 import { makeAssociative } from "@effect-ts/core/Associative"
@@ -142,18 +142,18 @@ export interface Config {
 }
 
 export interface Logger {
-    error: (...args: unknown[]) => As.UIO<void>;
-    log: (...args: unknown[]) => As.UIO<void>;
-    warn: (...args: unknown[]) => As.UIO<void>;
+    error: (...args: unknown[]) => T.UIO<void>;
+    log: (...args: unknown[]) => T.UIO<void>;
+    warn: (...args: unknown[]) => T.UIO<void>;
 }
 
 export interface Environment {
     // TODO change to return effect, because reading config might fail
     getConfig: () => Config;
     getLogger: () => Logger;
-    readFile: (filename: string) => As.IO<ReadFileError, string>;
-    readConsole: (prompt: string) => As.IO<ReadConsoleError, string>;
-    writeConsole: (s: string) => As.UIO<void>;
+    readFile: (filename: string) => T.IO<ReadFileError, string>;
+    readConsole: (prompt: string) => T.IO<ReadConsoleError, string>;
+    writeConsole: (s: string) => T.UIO<void>;
 }
 
 export const mkPlanet =

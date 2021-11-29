@@ -1,7 +1,7 @@
 import * as fs from "node:fs"
 import * as readline from "node:readline"
 import * as process from "node:process"
-import * as As from "@effect-ts/core/Async"
+import * as T from "@effect-ts/core/Effect"
 import {
     Logger,
     ReadConsoleError,
@@ -9,8 +9,8 @@ import {
 } from "./domain";
 
 // TODO accept Logging Service replace console.log with service
-export const readFile = (filename: string): As.IO<ReadFileError, string> =>
-    As.promise(
+export const readFile = (filename: string): T.IO<ReadFileError, string> =>
+    T.tryCatchPromise(
         () => new Promise((resolve, reject) => {
             fs.readFile(filename, 'utf8', (err, data) => {
                 if (err) {
@@ -29,8 +29,8 @@ export const readFile = (filename: string): As.IO<ReadFileError, string> =>
     );
 
 export const readConsole =
-    (prompt: string): As.IO<ReadConsoleError, string> =>
-        As.promise(
+    (prompt: string): T.IO<ReadConsoleError, string> =>
+        T.tryCatchPromise(
             () => new Promise((resolve, reject) => {
                 const rl = readline.createInterface({
                     input: process.stdin,
@@ -49,20 +49,20 @@ export const readConsole =
             }));
 
 export const writeConsole =
-    (s: string): As.UIO<void> =>
-        As.succeedWith(() => console.log(s));
+    (s: string): T.UIO<void> =>
+        T.succeedWith(() => console.log(s));
 
 const log =
-    (...args: unknown[]): As.UIO<void> =>
-        As.succeedWith(() => console.log("[LOG]", ...args));
+    (...args: unknown[]): T.UIO<void> =>
+        T.succeedWith(() => console.log("[LOG]", ...args));
 
 const error =
-    (...args: unknown[]): As.UIO<void> =>
-        As.succeedWith(() => console.error("[ERR]", ...args));
+    (...args: unknown[]): T.UIO<void> =>
+        T.succeedWith(() => console.error("[ERR]", ...args));
 
 const warn =
-    (...args: unknown[]): As.UIO<void> =>
-        As.succeedWith(() => console.warn("[WARN]", ...args));
+    (...args: unknown[]): T.UIO<void> =>
+        T.succeedWith(() => console.warn("[WARN]", ...args));
 
 export const getLogger = (): Logger => ({
     error,

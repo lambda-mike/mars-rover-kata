@@ -1,4 +1,4 @@
-import * as As from "@effect-ts/core/Async"
+import * as T from "@effect-ts/core/Effect"
 import { pipe } from "@effect-ts/core/Function"
 import {
     AppError,
@@ -12,32 +12,32 @@ import {
     TravelOutcome,
 } from "./domain";
 
-type App = As.Async<Environment, AppError, TravelOutcome>;
+type App = T.Effect<Environment, AppError, TravelOutcome>;
 
 export const app: App = pipe(
-    As.gen(function*(_) {
-        const config = yield* _(As.access((env: Environment) => env.getConfig()));
-        const logger = yield* _(As.access((env: Environment) => env.getLogger()));
-        const readFile = yield* _(As.access((env: Environment) => env.readFile));
-        const readConsole = yield* _(As.access((env: Environment) => env.readConsole));
-        const writeConsole = yield* _(As.access((env: Environment) => env.writeConsole));
+    T.gen(function*(_) {
+        const config = yield* _(T.access((env: Environment) => env.getConfig()));
+        const logger = yield* _(T.access((env: Environment) => env.getLogger()));
+        const readFile = yield* _(T.access((env: Environment) => env.readFile));
+        const readConsole = yield* _(T.access((env: Environment) => env.readConsole));
+        const writeConsole = yield* _(T.access((env: Environment) => env.writeConsole));
 
         yield* _(writeConsole("Welcome to Mars, Rover!"));
 
         const [planetStr, roverStr] = yield* _(pipe(
             readFile(config.planetFile),
-            As.zip(readFile(config.roverFile)),
+            T.zip(readFile(config.roverFile)),
         ));
         const planetTuple = planetStr.split("\n");
         if (planetTuple.length < 2) {
-            yield* _(As.fail({ kind: "MissingPlanetDataError" as const }));
+            yield* _(T.fail({ kind: "MissingPlanetDataError" as const }));
         }
-        const planet = yield* _(As.fromEither(parsePlanet(planetTuple[0])));
+        const planet = yield* _(T.fromEither(() => parsePlanet(planetTuple[0])));
         yield* _(logger.log("Planet", planet));
-        const obstacles = yield* _(As.fromEither(parseObstacles(planetTuple[1])));
+        const obstacles = yield* _(T.fromEither(() => parseObstacles(planetTuple[1])));
         yield* _(logger.log("Obstacles", obstacles));
 
-        const rover = yield* _(As.fromEither(parseRover(roverStr)));
+        const rover = yield* _(T.fromEither(() => parseRover(roverStr)));
         yield* _(logger.log("Rover", rover));
 
         const cmdsStr = yield* _(readConsole("Please, enter commands for the Rover in 'F,B,R,L' format: "));
@@ -45,7 +45,7 @@ export const app: App = pipe(
         yield* _(logger.log(`Rover is executing commands: ${cmds}`));
 
         const outcome =
-            yield* _(As.succeed(travel(planet, rover, obstacles, cmds)));
+            yield* _(T.succeed(travel(planet, rover, obstacles, cmds)));
         yield* _(writeConsole(`Rover position: ${renderTravelOutcome(outcome)}`));
 
         const finalMsg = outcome.kind === "Normal"

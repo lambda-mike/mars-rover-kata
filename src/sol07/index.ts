@@ -1,5 +1,5 @@
 import * as process from "node:process"
-import * as As from "@effect-ts/core/Async"
+import * as T from "@effect-ts/core/Effect"
 import { pipe } from "@effect-ts/core/Function"
 import {
     Config,
@@ -26,12 +26,12 @@ const main = (): Promise<void> => {
     };
     return pipe(
         app,
-        As.fold(
+        T.fold(
             (err) => console.error("Mission failed:", err),
             (_) => undefined,
         ),
-        As.provideAll(env),
-        As.runPromise,
+        T.provideAll(env),
+        T.runPromise,
     );
 };
 
