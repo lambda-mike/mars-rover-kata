@@ -1,5 +1,6 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
-import * as As from "@effect-ts/core/Async"
+import * as T from "@effect-ts/core/Effect"
+import * as Ex from "@effect-ts/system/Exit"
 import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
 import {
@@ -32,11 +33,11 @@ import {
   ReadFileError,
   renderTravelOutcome,
   travel,
-} from "../src/sol05/domain";
+} from "../src/sol07/domain";
 import {
   readFile,
-} from "../src/sol05/infra";
-import { app } from "../src/sol05/app";
+} from "../src/sol07/infra";
+import { app } from "../src/sol07/app";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -568,17 +569,17 @@ describe("Mars Kata", () => {
     describe("readFile", () => {
       it("properly reads existing file", async () => {
         const filename = "solIn.txt";
-        const result = await As.runPromiseExit(readFile(filename));
-        expect(result).toEqual(As.successExit("sol04 test 1 2 3"));
+        const result = await T.runPromiseExit(readFile(filename));
+        expect(result).toEqual(Ex.succeed("sol04 test 1 2 3"));
       });
       it("returns error when file does not exist", async () => {
         const filename = "solxx.txt";
         const result = await pipe(
           readFile(filename),
-          As.mapError((e) => e.filename),
-          As.runPromiseExit,
+          T.mapError((e) => e.filename),
+          T.runPromiseExit,
         );
-        expect(result).toEqual(As.failExit(filename));
+        expect(result).toEqual(Ex.fail(filename));
       });
     });
   });
@@ -600,29 +601,29 @@ describe("Mars Kata", () => {
 
         const getLogger = (): Logger => ({
           error: jest.fn((...args: unknown[]) =>
-            As.succeedWith(() => {
+            T.succeedWith(() => {
               logMock.error.push([...args]);
             })),
           log: jest.fn((...args: unknown[]) =>
-            As.succeedWith(() => {
+            T.succeedWith(() => {
               logMock.log.push([...args]);
             })),
           warn: jest.fn((...args: unknown[]) =>
-            As.succeedWith(() => {
+            T.succeedWith(() => {
               logMock.warn.push([...args]);
             })),
         });
         const readFileMock = jest.fn((filename: string) =>
-          As.succeedWith(() =>
+          T.succeedWith(() =>
             filename === config.planetFile
               ? "5x4\n1,2 0,0 3,4"
               : "1,3:W"));
         const readConsole = jest.fn((prompt: string) =>
-          As.succeedWith(() => {
+          T.succeedWith(() => {
             promptMock.push(prompt);
             return cmds;
           }));
-        const writeConsole = jest.fn((s: string) => As.succeedWith(() => consoleMock.push(s)));
+        const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
           getConfig: () => config,
           getLogger,
@@ -633,8 +634,8 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
-          As.provideAll(env),
-          As.runPromise,
+          T.provideAll(env),
+          T.runPromise,
         );
 
         expect(result).toStrictEqual({
@@ -677,15 +678,15 @@ describe("Mars Kata", () => {
 
         const getLogger = (): Logger => ({
           error: jest.fn((...args: unknown[]) =>
-            As.succeedWith(() => {
+            T.succeedWith(() => {
               logMock.error.push([...args]);
             })),
           log: jest.fn((...args: unknown[]) =>
-            As.succeedWith(() => {
+            T.succeedWith(() => {
               logMock.log.push([...args]);
             })),
           warn: jest.fn((...args: unknown[]) =>
-            As.succeedWith(() => {
+            T.succeedWith(() => {
               logMock.warn.push([...args]);
             })),
         });
@@ -695,13 +696,13 @@ describe("Mars Kata", () => {
           error: null,
         });
         const readFileMock = jest.fn((f: string) =>
-          As.fail(readFileErr(f)));
+          T.fail(readFileErr(f)));
         const readConsole = jest.fn((prompt: string) =>
-          As.succeedWith(() => {
+          T.succeedWith(() => {
             promptMock.push(prompt);
             return "";
           }));
-        const writeConsole = jest.fn((s: string) => As.succeedWith(() => consoleMock.push(s)));
+        const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
           getConfig: () => config,
           getLogger,
@@ -712,11 +713,11 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
-          As.provideAll(env),
-          As.runPromiseExit,
+          T.provideAll(env),
+          T.runPromiseExit,
         );
 
-        expect(result).toStrictEqual(As.failExit(readFileErr(config.planetFile)));
+        expect(result).toStrictEqual(Ex.fail(readFileErr(config.planetFile)));
         expect(consoleMock).toStrictEqual(["Welcome to Mars, Rover!"]);
         expect(promptMock).toStrictEqual([]);
         expect(logMock).toStrictEqual({
