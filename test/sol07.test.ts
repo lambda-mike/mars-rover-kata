@@ -52,7 +52,10 @@ describe("Mars Kata", () => {
         const w = 0;
         const h = -3;
         const mars = mkPlanet(w, h);
-        expect(mars).toStrictEqual(E.left(new Error("width and height must be positive numbers!")));
+        expect(mars).toStrictEqual(E.left({
+          kind: "PlanetConstructionError",
+          msg: "width and height must be positive numbers!",
+        }));
       });
     });
     describe("mkRover", () => {
@@ -68,7 +71,10 @@ describe("Mars Kata", () => {
         const y = -2;
         const dir = Orientation.N;
         const rover = mkRover(x, y, dir);
-        expect(rover).toStrictEqual(E.left(new Error("Coordinates must not be negative numbers!")));
+        expect(rover).toStrictEqual(E.left({
+          kind: "RoverCosntructionError",
+          msg: "Coordinates must not be negative numbers"
+        }));
       });
     });
     describe("turnLeft", () => {
@@ -383,23 +389,36 @@ describe("Mars Kata", () => {
     });
   });
   describe("Sol03", () => {
+    const wrongInputStrErr = {
+      error: {
+        error: "WrongInputStringError",
+        kind: "ParseNumPairError",
+      },
+      kind: "ParseObstacleError",
+    };
     describe("parsePlanet", () => {
       it("should parse correct input", async () => {
         const result = parsePlanet("5x4");
         expect(result).toStrictEqual(E.right({ width: 5, height: 4 }));
       });
       it("should return error given incorrect input", async () => {
-        const errMsg = "Wrong numbers pair string format!";
+        const err = {
+          kind: "ParsePlanetError",
+          error: {
+            kind: "ParseNumPairError",
+            error: "WrongInputStringError"
+          }
+        };
         const result1 = parsePlanet("ax4");
-        expect(result1).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result1).toStrictEqual(E.left(err));
         const result2 = parsePlanet("3xb");
-        expect(result2).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result2).toStrictEqual(E.left(err));
         const result3 = parsePlanet("3y8");
-        expect(result3).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result3).toStrictEqual(E.left(err));
         const result4 = parsePlanet("-3x8");
-        expect(result4).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result4).toStrictEqual(E.left(err));
         const result5 = parsePlanet("3x-8");
-        expect(result5).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result5).toStrictEqual(E.left(err));
       });
     });
     describe("parseObstacle", () => {
@@ -408,15 +427,14 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual(E.right({ pos: { x: 1, y: 2 } }));
       });
       it("should return error given incorrect input", async () => {
-        const errMsg = "Wrong numbers pair string format!";
         const result1 = parseObstacle(",2");
-        expect(result1).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result1).toStrictEqual(E.left(wrongInputStrErr));
         const result2 = parseObstacle("3,");
-        expect(result2).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result2).toStrictEqual(E.left(wrongInputStrErr));
         const result3 = parseObstacle("a,3");
-        expect(result3).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result3).toStrictEqual(E.left(wrongInputStrErr));
         const result4 = parseObstacle("-2,3");
-        expect(result4).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result4).toStrictEqual(E.left(wrongInputStrErr));
       });
     });
     describe("parseObstacles", () => {
@@ -425,15 +443,15 @@ describe("Mars Kata", () => {
         expect(result).toStrictEqual(E.right([{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]));
       });
       it("should return error given incorrect input", async () => {
-        const errMsg = "Wrong numbers pair string format!";
         const result1 = parseObstacles(",2 3,4");
-        expect(result1).toStrictEqual(E.left([new Error(errMsg)]));
+        expect(result1).toStrictEqual(E.left([wrongInputStrErr]));
         const result2 = parseObstacles("3, 3, 3");
-        expect(result2).toStrictEqual(E.left([new Error(errMsg), new Error(errMsg), new Error(errMsg)]));
+        expect(result2).toStrictEqual(E.left([wrongInputStrErr, wrongInputStrErr, wrongInputStrErr
+        ]));
         const result3 = parseObstacles("a,3 4,3");
-        expect(result3).toStrictEqual(E.left([new Error(errMsg)]));
+        expect(result3).toStrictEqual(E.left([wrongInputStrErr]));
         const result4 = parseObstacles("3,-3 4,3");
-        expect(result4).toStrictEqual(E.left([new Error(errMsg)]));
+        expect(result4).toStrictEqual(E.left([wrongInputStrErr]));
       });
     });
     describe("parseOrientation", () => {
@@ -448,11 +466,16 @@ describe("Mars Kata", () => {
         expect(w).toStrictEqual(E.right(Orientation.W));
       });
       it("should return error given incorrect input", async () => {
-        const errMsg = "Wrong orientation string format!"
         const result1 = parseOrientation("A");
-        expect(result1).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result1).toStrictEqual(E.left({
+          kind: "ParseOrientationError",
+          input: "A",
+        }));
         const result2 = parseOrientation("3");
-        expect(result2).toStrictEqual(E.left(new Error(errMsg)));
+        expect(result2).toStrictEqual(E.left({
+          kind: "ParseOrientationError",
+          input: "3",
+        }));
       });
     });
     describe("parseRover", () => {
@@ -462,11 +485,28 @@ describe("Mars Kata", () => {
       });
       it("should return error given incorrect input", async () => {
         const result1 = parseRover("1,2W");
-        expect(result1).toStrictEqual(E.left(new Error("Wrong rover input string format!")));
+        expect(result1).toStrictEqual(E.left({
+          kind: "ParseRoverError",
+          error: {
+            kind: "InputError"
+          },
+        }));
         const result2 = parseRover("1,2:A");
-        expect(result2).toStrictEqual(E.left(new Error("Wrong orientation string format!")));
+        expect(result2).toStrictEqual(E.left({
+          kind: "ParseRoverError",
+          error: {
+            kind: "ParseOrientationError",
+            input: "A",
+          }
+        }));
         const result3 = parseRover("1.2:A");
-        expect(result3).toStrictEqual(E.left(new Error("Wrong numbers pair string format!")));
+        expect(result3).toStrictEqual(E.left({
+          kind: "ParseRoverError",
+          error: {
+            kind: "ParseNumPairError",
+            error: "WrongInputStringError"
+          }
+        }));
       });
     });
     describe("parseRover benchmarks", () => {
