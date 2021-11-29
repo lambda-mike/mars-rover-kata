@@ -76,25 +76,63 @@ export interface RoverCosntructionError {
     msg: string;
 };
 
-export type ParseNumPairError =
-    | "PNPWrongInputStringError"
-    | "PNPWrongNumbersCountError"
-    | "PNPUnknownError"
-    ;
+export interface ParseNumPairError {
+    kind: "ParseNumPairError",
+    error:
+    | "WrongInputStringError"
+    | "WrongNumbersCountError"
+    | "UnknownError"
+}
 
-export type ParsePlanetError =
-    | { kind: "PPEParseNumPairError", error: ParseNumPairError }
-    | "PPNegativeSizeError"
-    ;
+export interface NegativeSizeError {
+    kind: "NegativeSizeError",
+}
 
+export interface NegativeCoordinatesError {
+    kind: "NegativeCoordinatesError",
+}
+
+export interface ParsePlanetError {
+    kind: "ParsePlanetError",
+    error:
+    | ParseNumPairError
+    | NegativeSizeError
+}
+
+export interface ParseObstacleError {
+    kind: "ParseObstacleError",
+    error: ParseNumPairError | NegativeCoordinatesError
+}
+
+export interface ParseOrientationError {
+    kind: "ParseOrientationError";
+    input: string;
+};
+
+export interface ParseRoverError {
+    kind: "ParseRoverError",
+    error:
+    | ParseNumPairError
+    | ParseOrientationError
+    | { kind: "InputError" }
+}
+
+// Planet tuple input has less than 2 inputs!
+export interface MissingPlanetDataError {
+    kind: "MissingPlanetDataError"
+}
 
 export type AppError =
-    // TODO wrap in custom type
-    | ReadonlyArray<Error>
+    | MissingPlanetDataError
+    | ParseCmdError
     | ParseCommandsError
+    | ParseNumPairError
+    | ParsePlanetError
+    | ParseRoverError
+    | PlanetConstructionError
     | ReadConsoleError
     | ReadFileError
-    | PlanetConstructionError
+    | ReadonlyArray<ParseObstacleError>
     | RoverCosntructionError
     ;
 
@@ -122,7 +160,10 @@ export const mkPlanet =
     (w: number, h: number): E.Either<PlanetConstructionError, Planet> =>
         w > 0 && h > 0
             ? E.right({ width: w, height: h })
-            : E.left({ kind: "PlanetConstructionError", msg: "width and height must be positive numbers!" });
+            : E.left({
+                kind: "PlanetConstructionError",
+                msg: "width and height must be positive numbers!"
+            });
 
 export const mkRover =
     (x: number, y: number, dir: Orientation): E.Either<RoverCosntructionError, Rover> =>
@@ -132,7 +173,10 @@ export const mkRover =
                 y,
                 orientation: dir,
             })
-            : E.left(new Error("Coordinates must not be negative numbers!"));
+            : E.left({
+                kind: "RoverCosntructionError",
+                msg: "Coordinates must not be negative numbers"
+            });
 
 export const turnLeft = (rover: Rover): Rover => {
     switch (rover.orientation) {
@@ -245,11 +289,17 @@ export const travel = (
 const parseNumPair = (sep: string) => (input: string): E.Either<ParseNumPairError, [number, number]> => {
     const regex = new RegExp(`^\\d+${sep}\\d+$`);
     if (!regex.test(input)) {
-        return E.left("PNPWrongInputStringError");
+        return E.left({
+            kind: "ParseNumPairError",
+            error: "WrongInputStringError"
+        });
     }
     const nums = input.split(`${sep}`);
     if (nums.length !== 2) {
-        return E.left("PNPWrongNumbersCountError");
+        return E.left({
+            kind: "ParseNumPairError",
+            error: "WrongNumbersCountError",
+        });
     }
     const [num1Str, num2Str] = nums;
     try {
@@ -259,36 +309,48 @@ const parseNumPair = (sep: string) => (input: string): E.Either<ParseNumPairErro
     }
     catch (_) {
         console.error("[parseNumPair]", JSON.stringify(_));
-        return E.left("PNPUnknownError");
+        return E.left({
+            kind: "ParseNumPairError",
+            error:
+                "UnknownError"
+        });
     }
 };
 
 export const parsePlanet = (input: string): E.Either<ParsePlanetError, Planet> => pipe(
     input,
     parseNumPair("x"),
-    E.mapLeft((error) => ({ error, kind: "PPEParseNumPairError" as const })),
     E.chain(([width, height]) => {
         if (width <= 0 || height <= 0) {
-            return E.left("PPNegativeSizeError" as const);
+            return E.left({
+                kind: "NegativeSizeError" as const,
+            });
         }
         return E.right({ width, height });
     }),
+    E.mapLeft((error) => ({ error, kind: "ParsePlanetError" })),
 );
 
-export const parseObstacle = (input: string): E.Either<Error, Obstacle> => pipe(
+export const parseObstacle = (input: string): E.Either<ParseObstacleError, Obstacle> => pipe(
     input,
     parseNumPair(","),
     E.chain(([x, y]) => {
         if (x < 0 || y < 0) {
-            return E.left(new Error("Coordinates must not be negative!"));
+            return E.left({ kind: "NegativeCoordinatesError" as const });
         }
         return E.right({ pos: { x, y } });
     }),
+    E.mapLeft((error) => ({
+        error,
+        kind: "ParseObstacleError"
+    })),
 );
 
-export const parseObstacles = (input: string): E.Either<ReadonlyArray<Error>, ReadonlyArray<Obstacle>> => {
+export const parseObstacles = (
+    input: string
+): E.Either<ReadonlyArray<ParseObstacleError>, ReadonlyArray<Obstacle>> => {
     const ValidationApplicative = E.getValidationApplicative(
-        makeAssociative<Array<Error>>((l, r) => [...l, ...r]),
+        makeAssociative<Array<ParseObstacleError>>((l, r) => [...l, ...r]),
     );
     const traverse = A.forEachF(ValidationApplicative);
     return pipe(
@@ -297,7 +359,9 @@ export const parseObstacles = (input: string): E.Either<ReadonlyArray<Error>, Re
     );
 };
 
-export const parseOrientation = (input: string): E.Either<Error, Orientation> => {
+export const parseOrientation = (
+    input: string
+): E.Either<ParseOrientationError, Orientation> => {
     switch (input) {
         case "N":
             return E.right(Orientation.N);
@@ -308,48 +372,67 @@ export const parseOrientation = (input: string): E.Either<Error, Orientation> =>
         case "W":
             return E.right(Orientation.W);
         default:
-            return E.left(new Error("Wrong orientation string format!"))
+            return E.left({ kind: "ParseOrientationError", input })
     }
 };
 
-export const parseRoverClassic = (input: string): E.Either<Error, Rover> => {
+export const parseRoverClassic = (
+    input: string
+): E.Either<ParseRoverError, Rover> => {
     const posAndDirStr = input.split(":");
     if (posAndDirStr.length !== 2) {
-        return E.left(new Error("Wrong rover input string format!"));
+        return E.left({
+            kind: "ParseRoverError",
+            error: { kind: "InputError" }
+        });
     }
     const pos = parseNumPair(",")(posAndDirStr[0]);
     const orientation = parseOrientation(posAndDirStr[1]);
     return pipe(
         pos,
         E.zip(orientation),
-        E.map(flow(
-            TP.toNative,
-            ([[x, y], orientation]) => ({ x, y, orientation }),
-        )),
+        E.bimap(
+            (error) => ({
+                kind: "ParseRoverError",
+                error
+            }),
+            flow(
+                TP.toNative,
+                ([[x, y], orientation]) => ({ x, y, orientation }),
+            ),
+        ),
     );
 };
 
 // E.gen
-export const parseRoverGen = (input: string): E.Either<Error, Rover> => {
+export const parseRoverGen = (input: string): E.Either<ParseRoverError, Rover> => {
     const posAndDirStr = input.split(":");
-    return E.gen(function*(_) {
-        if (posAndDirStr.length !== 2) {
-            yield* _(E.left(new Error("Wrong rover input string format!")));
-        }
-        const [x, y] = yield* _(parseNumPair(",")(posAndDirStr[0]));
-        const orientation = yield* _(parseOrientation(posAndDirStr[1]));
-        return { x, y, orientation };
-    });
+    return pipe(
+        E.gen(function*(_) {
+            if (posAndDirStr.length !== 2) {
+                yield* _(E.left(
+                    { kind: "InputError" as const }
+                ));
+            }
+            const [x, y] = yield* _(parseNumPair(",")(posAndDirStr[0]));
+            const orientation = yield* _(parseOrientation(posAndDirStr[1]));
+            return { x, y, orientation };
+        }),
+        E.mapLeft((error) => ({
+            kind: "ParseRoverError",
+            error
+        })),
+    );
 };
 
 // E.do
-export const parseRoverDo = (input: string): E.Either<Error, Rover> => {
+export const parseRoverDo = (input: string): E.Either<ParseRoverError, Rover> => {
     const posAndDirStr = input.split(":");
     return pipe(
         E.do,
         E.let("posAndDirTuple", () =>
             (posAndDirStr.length !== 2)
-                ? E.left(new Error("Wrong rover input string format!"))
+                ? E.left({ kind: "InputError" as const })
                 : E.right([posAndDirStr[0], posAndDirStr[1]])
         ),
         E.let("pos", ({ posAndDirTuple }) =>
@@ -358,6 +441,10 @@ export const parseRoverDo = (input: string): E.Either<Error, Rover> => {
             parseOrientation(posAndDirTuple[1])),
         E.map(({ pos, orientation }) =>
             ({ x: pos[0], y: pos[1], orientation })),
+        E.mapLeft((error) => ({
+            kind: "ParseRoverError",
+            error
+        })),
     );
 };
 

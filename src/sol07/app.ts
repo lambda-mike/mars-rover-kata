@@ -30,7 +30,7 @@ export const app: App = pipe(
         ));
         const planetTuple = planetStr.split("\n");
         if (planetTuple.length < 2) {
-            yield* _(As.fail(new Error("Planet tuple input has less than 2 inputs!")));
+            yield* _(As.fail({ kind: "MissingPlanetDataError" as const }));
         }
         const planet = yield* _(As.fromEither(parsePlanet(planetTuple[0])));
         yield* _(logger.log("Planet", planet));
