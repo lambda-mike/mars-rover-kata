@@ -136,11 +136,6 @@ export type AppError =
     | RoverCosntructionError
     ;
 
-export interface Config {
-    planetFile: string;
-    roverFile: string;
-}
-
 export interface Logger {
     error: (...args: unknown[]) => T.UIO<void>;
     log: (...args: unknown[]) => T.UIO<void>;
@@ -148,8 +143,6 @@ export interface Logger {
 }
 
 export interface Environment {
-    // TODO change to return effect, because reading config might fail
-    getConfig: () => Config;
     getLogger: () => Logger;
     readFile: (filename: string) => T.IO<ReadFileError, string>;
     readConsole: (prompt: string) => T.IO<ReadConsoleError, string>;

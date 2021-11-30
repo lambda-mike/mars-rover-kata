@@ -1,11 +1,11 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as T from "@effect-ts/core/Effect"
+import * as L from "@effect-ts/core/Effect/Layer"
 import * as Ex from "@effect-ts/system/Exit"
 import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
 import {
   Cmd,
-  Config,
   Environment,
   Logger,
   Obstacle,
@@ -38,6 +38,7 @@ import {
   readFile,
 } from "../src/sol07/infra";
 import { app } from "../src/sol07/app";
+import { Config } from "../src/sol07/config";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -627,10 +628,12 @@ describe("Mars Kata", () => {
     describe("app", () => {
       it("make proper calls for happy path", async () => {
         const cmds = "F,B,L,R,F";
-        const config: Config = {
-          planetFile: "planet.txt",
+        const planetFile = "planet.txt";
+        const ConfigLive = L.pure(Config)({
+          _tag: "Config",
+          planetFile,
           roverFile: "rover.txt",
-        };
+        } as const);
         const logMock = {
           error: [] as unknown[],
           log: [] as unknown[],
@@ -655,7 +658,7 @@ describe("Mars Kata", () => {
         });
         const readFileMock = jest.fn((filename: string) =>
           T.succeedWith(() =>
-            filename === config.planetFile
+            filename === planetFile
               ? "5x4\n1,2 0,0 3,4"
               : "1,3:W"));
         const readConsole = jest.fn((prompt: string) =>
@@ -665,7 +668,6 @@ describe("Mars Kata", () => {
           }));
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          getConfig: () => config,
           getLogger,
           readFile: readFileMock,
           readConsole,
@@ -674,6 +676,7 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
+          T.provideSomeLayer(ConfigLive),
           T.provideAll(env),
           T.runPromise,
         );
@@ -704,10 +707,12 @@ describe("Mars Kata", () => {
         });
       });
       it("handles wrong planetFile error", async () => {
-        const config: Config = {
-          planetFile: "nope.txt",
+        const planetFile = "nope.txt";
+        const ConfigLive = L.pure(Config)({
+          _tag: "Config",
+          planetFile,
           roverFile: "rover.txt",
-        };
+        } as const);
         const logMock = {
           error: [] as unknown[],
           log: [] as unknown[],
@@ -744,7 +749,6 @@ describe("Mars Kata", () => {
           }));
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          getConfig: () => config,
           getLogger,
           readFile: readFileMock,
           readConsole,
@@ -753,11 +757,12 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
+          T.provideSomeLayer(ConfigLive),
           T.provideAll(env),
           T.runPromiseExit,
         );
 
-        expect(result).toStrictEqual(Ex.fail(readFileErr(config.planetFile)));
+        expect(result).toStrictEqual(Ex.fail(readFileErr(planetFile)));
         expect(consoleMock).toStrictEqual(["Welcome to Mars, Rover!"]);
         expect(promptMock).toStrictEqual([]);
         expect(logMock).toStrictEqual({

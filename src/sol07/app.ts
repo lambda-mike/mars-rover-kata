@@ -1,5 +1,6 @@
 import * as T from "@effect-ts/core/Effect"
 import { pipe } from "@effect-ts/core/Function"
+import { Has } from "@effect-ts/core/Has"
 import {
     AppError,
     Environment,
@@ -11,12 +12,15 @@ import {
     travel,
     TravelOutcome,
 } from "./domain";
+import {
+    Config,
+} from "./config";
 
-type App = T.Effect<Environment, AppError, TravelOutcome>;
+type App = T.Effect<Environment & Has<Config>, AppError, TravelOutcome>;
 
 export const app: App = pipe(
     T.gen(function*(_) {
-        const config = yield* _(T.access((env: Environment) => env.getConfig()));
+        const config = yield* _(Config);
         const logger = yield* _(T.access((env: Environment) => env.getLogger()));
         const readFile = yield* _(T.access((env: Environment) => env.readFile));
         const readConsole = yield* _(T.access((env: Environment) => env.readConsole));
