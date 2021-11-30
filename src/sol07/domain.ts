@@ -136,14 +136,7 @@ export type AppError =
     | RoverCosntructionError
     ;
 
-export interface Logger {
-    error: (...args: unknown[]) => T.UIO<void>;
-    log: (...args: unknown[]) => T.UIO<void>;
-    warn: (...args: unknown[]) => T.UIO<void>;
-}
-
 export interface Environment {
-    getLogger: () => Logger;
     readFile: (filename: string) => T.IO<ReadFileError, string>;
     readConsole: (prompt: string) => T.IO<ReadConsoleError, string>;
     writeConsole: (s: string) => T.UIO<void>;

@@ -12,16 +12,17 @@ import {
     travel,
     TravelOutcome,
 } from "./domain";
-import {
-    Config,
-} from "./config";
+import { Config } from "./config";
+import { Logger } from "./logger";
 
-type App = T.Effect<Environment & Has<Config>, AppError, TravelOutcome>;
+type App = T.Effect<
+    Environment & Has<Config> & Has<Logger>
+    , AppError, TravelOutcome>;
 
 export const app: App = pipe(
     T.gen(function*(_) {
         const config = yield* _(Config);
-        const logger = yield* _(T.access((env: Environment) => env.getLogger()));
+        const logger = yield* _(Logger);
         const readFile = yield* _(T.access((env: Environment) => env.readFile));
         const readConsole = yield* _(T.access((env: Environment) => env.readConsole));
         const writeConsole = yield* _(T.access((env: Environment) => env.writeConsole));

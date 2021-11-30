@@ -7,7 +7,6 @@ import { pipe } from "@effect-ts/core/Function"
 import {
   Cmd,
   Environment,
-  Logger,
   Obstacle,
   Orientation,
   Planet,
@@ -39,6 +38,7 @@ import {
 } from "../src/sol07/infra";
 import { app } from "../src/sol07/app";
 import { Config } from "../src/sol07/config";
+import { Logger } from "../src/sol07/logger";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -642,7 +642,8 @@ describe("Mars Kata", () => {
         const consoleMock: Array<string> = [];
         const promptMock: Array<string> = [];
 
-        const getLogger = (): Logger => ({
+        const LoggerLive = L.pure(Logger)({
+          _tag: "Logger",
           error: jest.fn((...args: unknown[]) =>
             T.succeedWith(() => {
               logMock.error.push([...args]);
@@ -668,7 +669,6 @@ describe("Mars Kata", () => {
           }));
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          getLogger,
           readFile: readFileMock,
           readConsole,
           writeConsole,
@@ -676,7 +676,7 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
-          T.provideSomeLayer(ConfigLive),
+          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)),
           T.provideAll(env),
           T.runPromise,
         );
@@ -721,7 +721,8 @@ describe("Mars Kata", () => {
         const consoleMock: Array<string> = [];
         const promptMock: Array<string> = [];
 
-        const getLogger = (): Logger => ({
+        const LoggerLive = L.pure(Logger)({
+          _tag: "Logger",
           error: jest.fn((...args: unknown[]) =>
             T.succeedWith(() => {
               logMock.error.push([...args]);
@@ -749,7 +750,6 @@ describe("Mars Kata", () => {
           }));
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          getLogger,
           readFile: readFileMock,
           readConsole,
           writeConsole,
@@ -757,7 +757,7 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
-          T.provideSomeLayer(ConfigLive),
+          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)),
           T.provideAll(env),
           T.runPromiseExit,
         );

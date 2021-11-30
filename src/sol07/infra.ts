@@ -3,7 +3,6 @@ import * as readline from "node:readline"
 import * as process from "node:process"
 import * as T from "@effect-ts/core/Effect"
 import {
-    Logger,
     ReadConsoleError,
     ReadFileError,
 } from "./domain";
@@ -51,21 +50,3 @@ export const readConsole =
 export const writeConsole =
     (s: string): T.UIO<void> =>
         T.succeedWith(() => console.log(s));
-
-const log =
-    (...args: unknown[]): T.UIO<void> =>
-        T.succeedWith(() => console.log("[LOG]", ...args));
-
-const error =
-    (...args: unknown[]): T.UIO<void> =>
-        T.succeedWith(() => console.error("[ERR]", ...args));
-
-const warn =
-    (...args: unknown[]): T.UIO<void> =>
-        T.succeedWith(() => console.warn("[WARN]", ...args));
-
-export const getLogger = (): Logger => ({
-    error,
-    log,
-    warn,
-});

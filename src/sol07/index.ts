@@ -6,12 +6,12 @@ import {
     Config,
 } from "./config";
 import {
-    getLogger,
     readConsole,
     readFile,
     writeConsole,
 } from "./infra";
 import { app } from "./app";
+import { LoggerLive } from "./logger";
 
 const ConfigLive = L.pure(Config)({
     _tag: "Config",
@@ -19,9 +19,10 @@ const ConfigLive = L.pure(Config)({
     roverFile: "rover.txt",
 } as const);
 
+const LayerLive = ConfigLive["+++"](LoggerLive);
+
 const main = (): Promise<void> => {
     const env = {
-        getLogger,
         readFile,
         readConsole,
         writeConsole,
@@ -32,7 +33,7 @@ const main = (): Promise<void> => {
             (err) => console.error("Mission failed:", err),
             (_) => undefined,
         ),
-        T.provideSomeLayer(ConfigLive),
+        T.provideSomeLayer(LayerLive),
         T.provideAll(env),
         T.runPromise,
     );
