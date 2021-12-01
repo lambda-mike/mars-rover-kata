@@ -137,7 +137,6 @@ export type AppError =
     ;
 
 export interface Environment {
-    readFile: (filename: string) => T.IO<ReadFileError, string>;
     readConsole: (prompt: string) => T.IO<ReadConsoleError, string>;
     writeConsole: (s: string) => T.UIO<void>;
 }

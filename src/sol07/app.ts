@@ -14,16 +14,16 @@ import {
 } from "./domain";
 import { Config } from "./config";
 import { Logger } from "./logger";
+import { ReadFile, readFile } from "./readFile";
 
 type App = T.Effect<
-    Environment & Has<Config> & Has<Logger>
+    Environment & Has<Config> & Has<Logger> & Has<ReadFile>
     , AppError, TravelOutcome>;
 
 export const app: App = pipe(
     T.gen(function*(_) {
         const config = yield* _(Config);
         const logger = yield* _(Logger);
-        const readFile = yield* _(T.access((env: Environment) => env.readFile));
         const readConsole = yield* _(T.access((env: Environment) => env.readConsole));
         const writeConsole = yield* _(T.access((env: Environment) => env.writeConsole));
 

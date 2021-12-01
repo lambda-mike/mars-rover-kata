@@ -33,12 +33,10 @@ import {
   renderTravelOutcome,
   travel,
 } from "../src/sol07/domain";
-import {
-  readFile,
-} from "../src/sol07/infra";
 import { app } from "../src/sol07/app";
 import { Config } from "../src/sol07/config";
 import { Logger } from "../src/sol07/logger";
+import { ReadFile, ReadFileLive, readFile } from "../src/sol07/readFile";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -610,21 +608,30 @@ describe("Mars Kata", () => {
     describe("readFile", () => {
       it("properly reads existing file", async () => {
         const filename = "solIn.txt";
-        const result = await T.runPromiseExit(readFile(filename));
+        const result = await pipe(
+          T.gen(function*(_) {
+            return yield* _(readFile(filename));
+          }),
+          T.provideLayer(ReadFileLive),
+          T.runPromiseExit,
+        );
         expect(result).toEqual(Ex.succeed("sol04 test 1 2 3"));
       });
       it("returns error when file does not exist", async () => {
         const filename = "solxx.txt";
         const result = await pipe(
-          readFile(filename),
+          T.gen(function*(_) {
+            return yield* _(readFile(filename));
+          }),
           T.mapError((e) => e.filename),
+          T.provideLayer(ReadFileLive),
           T.runPromiseExit,
         );
         expect(result).toEqual(Ex.fail(filename));
       });
     });
   });
-  describe("Sol05", () => {
+  describe("Sol07", () => {
     describe("app", () => {
       it("make proper calls for happy path", async () => {
         const cmds = "F,B,L,R,F";
@@ -662,6 +669,10 @@ describe("Mars Kata", () => {
             filename === planetFile
               ? "5x4\n1,2 0,0 3,4"
               : "1,3:W"));
+        const ReadFileLiveMock = L.pure(ReadFile)({
+          _tag: "ReadFile",
+          readFile: readFileMock,
+        });
         const readConsole = jest.fn((prompt: string) =>
           T.succeedWith(() => {
             promptMock.push(prompt);
@@ -669,14 +680,13 @@ describe("Mars Kata", () => {
           }));
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          readFile: readFileMock,
           readConsole,
           writeConsole,
         };
 
         const result = await pipe(
           app,
-          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)),
+          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)["+++"](ReadFileLiveMock)),
           T.provideAll(env),
           T.runPromise,
         );
@@ -743,6 +753,10 @@ describe("Mars Kata", () => {
         });
         const readFileMock = jest.fn((f: string) =>
           T.fail(readFileErr(f)));
+        const ReadFileLiveMock = L.pure(ReadFile)({
+          _tag: "ReadFile",
+          readFile: readFileMock,
+        });
         const readConsole = jest.fn((prompt: string) =>
           T.succeedWith(() => {
             promptMock.push(prompt);
@@ -750,14 +764,13 @@ describe("Mars Kata", () => {
           }));
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          readFile: readFileMock,
           readConsole,
           writeConsole,
         };
 
         const result = await pipe(
           app,
-          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)),
+          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)["+++"](ReadFileLiveMock)),
           T.provideAll(env),
           T.runPromiseExit,
         );

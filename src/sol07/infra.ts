@@ -1,32 +1,11 @@
-import * as fs from "node:fs"
 import * as readline from "node:readline"
 import * as process from "node:process"
 import * as T from "@effect-ts/core/Effect"
 import {
     ReadConsoleError,
-    ReadFileError,
 } from "./domain";
 
-// TODO accept Logging Service replace console.log with service
-export const readFile = (filename: string): T.IO<ReadFileError, string> =>
-    T.tryCatchPromise(
-        () => new Promise((resolve, reject) => {
-            fs.readFile(filename, 'utf8', (err, data) => {
-                if (err) {
-                    //console.error("[readFile]", err, JSON.stringify(err));
-                    return reject(err);
-                }
-                return resolve(data.trim());
-            });
-        }),
-        // TODO log error
-        (error): ReadFileError => ({
-            kind: "ReadFileError",
-            filename,
-            error,
-        }),
-    );
-
+// TODO try using Managed with release fn
 export const readConsole =
     (prompt: string): T.IO<ReadConsoleError, string> =>
         T.tryCatchPromise(
