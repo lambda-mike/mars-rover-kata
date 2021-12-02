@@ -607,26 +607,69 @@ describe("Mars Kata", () => {
     });
     describe("readFile", () => {
       it("properly reads existing file", async () => {
+        //  TODO refactor to factory fn and reuse the helpe in all the tests
+        const logMock = {
+          error: [] as unknown[],
+          log: [] as unknown[],
+          warn: [] as unknown[],
+        };
+        const LoggerLive = L.pure(Logger)({
+          _tag: "Logger",
+          error: jest.fn((...args: unknown[]) =>
+            T.succeedWith(() => {
+              logMock.error.push([...args]);
+            })),
+          log: jest.fn((...args: unknown[]) =>
+            T.succeedWith(() => {
+              logMock.log.push([...args]);
+            })),
+          warn: jest.fn((...args: unknown[]) =>
+            T.succeedWith(() => {
+              logMock.warn.push([...args]);
+            })),
+        });
         const filename = "solIn.txt";
         const result = await pipe(
           T.gen(function*(_) {
             return yield* _(readFile(filename));
           }),
-          T.provideLayer(ReadFileLive),
+          T.provideLayer(ReadFileLive["<=<"](LoggerLive)),
           T.runPromiseExit,
         );
+        console.log("DBG", logMock);
         expect(result).toEqual(Ex.succeed("sol04 test 1 2 3"));
       });
       it("returns error when file does not exist", async () => {
+        const logMock = {
+          error: [] as unknown[],
+          log: [] as unknown[],
+          warn: [] as unknown[],
+        };
+        const LoggerLive = L.pure(Logger)({
+          _tag: "Logger",
+          error: jest.fn((...args: unknown[]) =>
+            T.succeedWith(() => {
+              logMock.error.push([...args]);
+            })),
+          log: jest.fn((...args: unknown[]) =>
+            T.succeedWith(() => {
+              logMock.log.push([...args]);
+            })),
+          warn: jest.fn((...args: unknown[]) =>
+            T.succeedWith(() => {
+              logMock.warn.push([...args]);
+            })),
+        });
         const filename = "solxx.txt";
         const result = await pipe(
           T.gen(function*(_) {
             return yield* _(readFile(filename));
           }),
           T.mapError((e) => e.filename),
-          T.provideLayer(ReadFileLive),
+          T.provideLayer(ReadFileLive["<=<"](LoggerLive)),
           T.runPromiseExit,
         );
+        console.log("DBG", logMock);
         expect(result).toEqual(Ex.fail(filename));
       });
     });
@@ -686,7 +729,8 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
-          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)["+++"](ReadFileLiveMock)),
+          T.provideSomeLayer(
+            ConfigLive["+++"](LoggerLive)["+++"](LoggerLive[">=>"](ReadFileLiveMock))),
           T.provideAll(env),
           T.runPromise,
         );
@@ -770,7 +814,8 @@ describe("Mars Kata", () => {
 
         const result = await pipe(
           app,
-          T.provideSomeLayer(ConfigLive["+++"](LoggerLive)["+++"](ReadFileLiveMock)),
+          T.provideSomeLayer(
+            ConfigLive["+++"](LoggerLive)["+++"](LoggerLive[">=>"](ReadFileLiveMock))),
           T.provideAll(env),
           T.runPromiseExit,
         );

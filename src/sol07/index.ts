@@ -19,7 +19,7 @@ const ConfigLive = L.pure(Config)({
     roverFile: "rover.txt",
 } as const);
 
-const LayerLive = ConfigLive["+++"](LoggerLive)["+++"](ReadFileLive);
+const LayerLive = ConfigLive["+++"](LoggerLive[">+>"](ReadFileLive));
 
 const main = (): Promise<void> => {
     const env = {
