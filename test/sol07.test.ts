@@ -633,7 +633,7 @@ describe("Mars Kata", () => {
           T.gen(function*(_) {
             return yield* _(readFile(filename));
           }),
-          T.provideLayer(ReadFileLive["<=<"](LoggerLive)),
+          T.provideLayer(ReadFileLive["<+<"](LoggerLive)),
           T.runPromiseExit,
         );
         console.log("DBG", logMock);
@@ -666,7 +666,7 @@ describe("Mars Kata", () => {
             return yield* _(readFile(filename));
           }),
           T.mapError((e) => e.filename),
-          T.provideLayer(ReadFileLive["<=<"](LoggerLive)),
+          T.provideLayer(ReadFileLive["<+<"](LoggerLive)),
           T.runPromiseExit,
         );
         console.log("DBG", logMock);
