@@ -14,9 +14,10 @@ const mkReadFileLive = T.gen(function*(_) {
     yield* _(logger.log("[readFile] make"));
     return {
         _tag: "ReadFile",
-        readFile: (filename: string): T.Effect<Has<Logger>, ReadFileError, string> => T.gen(function*(_) {
-            const logger = yield* _(Logger);
-            return yield* _(pipe(
+        readFile: (
+            filename: string
+        ): T.Effect<Has<Logger>, ReadFileError, string> =>
+            T.accessServiceM(Logger)(logger => pipe(
                 T.tryCatchPromise<ReadFileError, string>(
                     () => new Promise((resolve, reject) => {
                         fs.readFile(filename, 'utf8', (err, data) => {
@@ -37,8 +38,7 @@ const mkReadFileLive = T.gen(function*(_) {
                     (err) => logger.error("[readFile]", err),
                     (x) => logger.log("[readFile]", x),
                 ),
-            ));
-        }),
+            ))
     };
 });
 
