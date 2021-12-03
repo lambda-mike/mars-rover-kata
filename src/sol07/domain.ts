@@ -61,6 +61,7 @@ export interface ParseCommandsError {
     input: string;
 }
 
+// TODO add subtypes: close error,  acquire error
 export interface ReadConsoleError {
     kind: "ReadConsoleError";
     error: unknown;
@@ -137,7 +138,6 @@ export type AppError =
     ;
 
 export interface Environment {
-    readConsole: (prompt: string) => T.IO<ReadConsoleError, string>;
     writeConsole: (s: string) => T.UIO<void>;
 }
 

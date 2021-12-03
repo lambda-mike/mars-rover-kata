@@ -1,3 +1,4 @@
+import * as M from "@effect-ts/core/Effect/Managed"
 import * as T from "@effect-ts/core/Effect"
 import { pipe } from "@effect-ts/core/Function"
 import { Has } from "@effect-ts/core/Has"
@@ -15,9 +16,14 @@ import {
 import { Config } from "./config";
 import { Logger } from "./logger";
 import { ReadFile, readFile } from "./readFile";
+import { Console } from "./console";
 
 type App = T.Effect<
-    Environment & Has<Config> & Has<Logger> & Has<ReadFile>
+    Environment
+    & Has<Config>
+    & Has<Console>
+    & Has<Logger>
+    & Has<ReadFile>
     , AppError, TravelOutcome>;
 
 // TODO refactor to repeat command reading and printing result,
@@ -26,7 +32,7 @@ export const app: App = pipe(
     T.gen(function*(_) {
         const config = yield* _(Config);
         const logger = yield* _(Logger);
-        const readConsole = yield* _(T.access((env: Environment) => env.readConsole));
+        const { readConsole } = yield* _(Console);
         const writeConsole = yield* _(T.access((env: Environment) => env.writeConsole));
 
         yield* _(writeConsole("Welcome to Mars, Rover!"));
@@ -47,7 +53,8 @@ export const app: App = pipe(
         const rover = yield* _(T.fromEither(() => parseRover(roverStr)));
         yield* _(logger.log("Rover", rover));
 
-        const cmdsStr = yield* _(readConsole("Please, enter commands for the Rover in 'F,B,R,L' format: "));
+        const prompt = "Please, enter commands for the Rover in 'F,B,R,L' format: ";
+        const cmdsStr = yield* _(M.useNow(readConsole(prompt)));
         const cmds = yield* _(parseCommands(cmdsStr));
         yield* _(logger.log(`Rover is executing commands: ${cmds}`));
 

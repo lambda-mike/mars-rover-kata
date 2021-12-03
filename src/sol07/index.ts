@@ -6,12 +6,12 @@ import {
     Config,
 } from "./config";
 import {
-    readConsole,
     writeConsole,
 } from "./infra";
 import { app } from "./app";
 import { LoggerLive } from "./logger";
 import { ReadFileLive } from "./readFile";
+import { ConsoleLive } from "./console";
 
 const ConfigLive = L.pure(Config)({
     _tag: "Config",
@@ -19,11 +19,13 @@ const ConfigLive = L.pure(Config)({
     roverFile: "rover.txt",
 } as const);
 
-const LayerLive = ConfigLive["+++"](LoggerLive[">+>"](ReadFileLive));
+const LayerLive =
+    ConfigLive["+++"](
+        LoggerLive[">+>"](ReadFileLive)["+++"](
+            ConsoleLive));
 
 const main = (): Promise<void> => {
     const env = {
-        readConsole,
         writeConsole,
     };
     return pipe(

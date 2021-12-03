@@ -1,6 +1,7 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
-import * as T from "@effect-ts/core/Effect"
 import * as L from "@effect-ts/core/Effect/Layer"
+import * as M from "@effect-ts/core/Effect/Managed"
+import * as T from "@effect-ts/core/Effect"
 import * as Ex from "@effect-ts/system/Exit"
 import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
@@ -37,6 +38,7 @@ import { app } from "../src/sol07/app";
 import { Config } from "../src/sol07/config";
 import { Logger } from "../src/sol07/logger";
 import { ReadFile, ReadFileLive, readFile } from "../src/sol07/readFile";
+import { Console } from "../src/sol07/console";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -717,20 +719,26 @@ describe("Mars Kata", () => {
           readFile: readFileMock,
         });
         const readConsole = jest.fn((prompt: string) =>
-          T.succeedWith(() => {
+          M.succeedWith(() => {
             promptMock.push(prompt);
             return cmds;
           }));
+        const ConsoleLiveMock = L.pure(Console)({
+          _tag: "Console",
+          readConsole,
+        })
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          readConsole,
           writeConsole,
         };
 
         const result = await pipe(
           app,
           T.provideSomeLayer(
-            ConfigLive["+++"](LoggerLive)["+++"](LoggerLive[">=>"](ReadFileLiveMock))),
+            ConfigLive["+++"](
+              LoggerLive)["+++"](
+                LoggerLive[">=>"](ReadFileLiveMock)["+++"](
+                  ConsoleLiveMock))),
           T.provideAll(env),
           T.runPromise,
         );
@@ -802,20 +810,26 @@ describe("Mars Kata", () => {
           readFile: readFileMock,
         });
         const readConsole = jest.fn((prompt: string) =>
-          T.succeedWith(() => {
+          M.succeedWith(() => {
             promptMock.push(prompt);
             return "";
           }));
+        const ConsoleLiveMock = L.pure(Console)({
+          _tag: "Console",
+          readConsole,
+        })
         const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
         const env: Environment = {
-          readConsole,
           writeConsole,
         };
 
         const result = await pipe(
           app,
           T.provideSomeLayer(
-            ConfigLive["+++"](LoggerLive)["+++"](LoggerLive[">=>"](ReadFileLiveMock))),
+            ConfigLive["+++"](
+              LoggerLive)["+++"](
+                LoggerLive[">=>"](ReadFileLiveMock)["+++"](
+                  ConsoleLiveMock))),
           T.provideAll(env),
           T.runPromiseExit,
         );
