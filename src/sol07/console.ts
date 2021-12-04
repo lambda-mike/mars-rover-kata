@@ -44,7 +44,7 @@ export const mkConsoleLive = M.succeedWith(() => ({
     _tag: "Console" as const,
     readConsole:
         (prompt: string) =>
-            M.accessServiceM(Logger)((logger) => pipe(
+            pipe(
                 consoleM,
                 M.chain((rl) => T.toManaged(pipe(
                     T.tryCatchPromise<ReadConsoleError, string>(
@@ -60,9 +60,11 @@ export const mkConsoleLive = M.succeedWith(() => ({
                             error: err,
                         }),
                     ),
-                    T.tap((answer) => logger.log("[DBG] answer", answer)),
+                    T.tap((answer) =>
+                        T.accessServiceM(Logger)((logger) =>
+                            logger.log("[DBG] answer", answer))),
                 ))),
-            )),
+            ),
 }));
 
 export interface Console extends _A<typeof mkConsoleLive> { }
