@@ -29,3 +29,10 @@ export const LoggerLive = L.pure(Logger)({
     error,
     warn,
 });
+
+export const SilentLoggerLive = L.pure(Logger)({
+    _tag: "Logger",
+    log: () => T.succeed(undefined),
+    error: () => T.succeed(undefined),
+    warn: () => T.succeed(undefined),
+});

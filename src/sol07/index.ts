@@ -6,7 +6,7 @@ import {
     Config,
 } from "./config";
 import { app } from "./app";
-import { LoggerLive } from "./logger";
+import { LoggerLive, SilentLoggerLive } from "./logger";
 import { ReadFileLive } from "./readFile";
 import { ConsoleLive } from "./console";
 
@@ -19,6 +19,7 @@ const ConfigLive = L.pure(Config)({
 const LayerLive =
     ConfigLive["+++"](
         LoggerLive[">+>"](
+            //SilentLoggerLive[">+>"](
             ReadFileLive)["+++"](ConsoleLive));
 
 const main = (): Promise<void> => {

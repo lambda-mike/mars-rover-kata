@@ -636,7 +636,6 @@ describe("Mars Kata", () => {
           T.provideLayer(ReadFileLive["<+<"](LoggerLive)),
           T.runPromiseExit,
         );
-        console.log("DBG", logMock);
         expect(result).toEqual(Ex.succeed("sol04 test 1 2 3"));
       });
       it("returns error when file does not exist", async () => {
@@ -669,7 +668,6 @@ describe("Mars Kata", () => {
           T.provideLayer(ReadFileLive["<+<"](LoggerLive)),
           T.runPromiseExit,
         );
-        console.log("DBG", logMock);
         expect(result).toEqual(Ex.fail(filename));
       });
     });
