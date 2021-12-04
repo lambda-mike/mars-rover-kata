@@ -11,7 +11,6 @@ import {
 } from "./domain";
 import { Logger } from "./logger";
 
-// TODO add subtypes: acquire error
 const consoleM = M.gen(function*(_) {
     const logger = yield* _(Logger);
     return yield* _(M.make(
@@ -21,22 +20,27 @@ const consoleM = M.gen(function*(_) {
                 rl.close();
                 return;
             }),
-            // result is ignore by M.make
+            // result is ignored by M.make
             T.result,
         )
     )(pipe(
         logger.log("[DBG] acquire"),
-        T.andThen(T.tryCatch(() => {
-            return readline.createInterface({
-                input: process.stdin,
-                output: process.stdout,
-            })
-        },
-            (error): ReadConsoleError => ({
-                kind: "ReadConsoleError",
-                error,
-            })
-        )),
+        T.andThen(
+            T.tryCatch(() => {
+                return readline.createInterface({
+                    input: process.stdin,
+                    output: process.stdout,
+                })
+            },
+                (error): ReadConsoleError => ({
+                    kind: "ReadConsoleError",
+                    error: {
+                        kind: "ReadConsoleCreateError",
+                        error,
+                    }
+                    ,
+                }),
+            )),
     )));
 });
 
@@ -55,10 +59,16 @@ export const mkConsoleLive = M.succeedWith(() => ({
                                 return resolve(answer);
                             });
                         }),
-                        (err): ReadConsoleError => ({
-                            kind: "ReadConsoleError",
-                            error: err,
-                        }),
+                        (error): ReadConsoleError => (
+                            {
+                                kind: "ReadConsoleError",
+                                error: {
+                                    kind: "ReadConsoleQuestionError",
+                                    error,
+                                }
+                                ,
+                            }
+                        ),
                     ),
                     T.tap((answer) =>
                         T.accessServiceM(Logger)((logger) =>

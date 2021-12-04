@@ -61,9 +61,21 @@ export interface ParseCommandsError {
     input: string;
 }
 
-// TODO add subtypes: close error,  acquire error
 export interface ReadConsoleError {
     kind: "ReadConsoleError";
+    error:
+    | ReadConsoleCreateError
+    | ReadConsoleQuestionError
+    ;
+};
+
+export interface ReadConsoleCreateError {
+    kind: "ReadConsoleCreateError";
+    error: unknown;
+};
+
+export interface ReadConsoleQuestionError {
+    kind: "ReadConsoleQuestionError";
     error: unknown;
 };
 
