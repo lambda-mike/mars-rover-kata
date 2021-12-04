@@ -86,7 +86,6 @@ export interface Logger {
 }
 
 export interface Environment {
-    // TODO change to return effect, because reading config might fail
     getConfig: () => Config;
     getLogger: () => Logger;
     readFile: (filename: string) => As.IO<ReadFileError, string>;

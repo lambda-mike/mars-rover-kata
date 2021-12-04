@@ -8,19 +8,16 @@ import {
     ReadFileError,
 } from "./domain";
 
-// TODO accept Logging Service replace console.log with service
 export const readFile = (filename: string): As.IO<ReadFileError, string> =>
     As.promise(
         () => new Promise((resolve, reject) => {
             fs.readFile(filename, 'utf8', (err, data) => {
                 if (err) {
-                    //console.error("[readFile]", err, JSON.stringify(err));
                     return reject(err);
                 }
                 return resolve(data.trim());
             });
         }),
-        // TODO log error
         (error): ReadFileError => ({
             kind: "ReadFileError",
             filename,

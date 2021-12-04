@@ -26,8 +26,6 @@ type App = T.Effect<
     & Has<ReadFile>
     , AppError, TravelOutcome>;
 
-// TODO refactor to repeat command reading and printing result,
-// remember Rover's latest position
 export const app: App = pipe(
     T.gen(function*(_) {
         const config = yield* _(Config);
