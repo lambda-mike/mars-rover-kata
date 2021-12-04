@@ -75,6 +75,9 @@ export const mkConsoleLive = M.succeedWith(() => ({
                             logger.log("[DBG] answer", answer))),
                 ))),
             ),
+    writeConsole:
+        (...xs: unknown[]): T.UIO<void> =>
+            T.succeedWith(() => console.log(...xs)),
 }));
 
 export interface Console extends _A<typeof mkConsoleLive> { }

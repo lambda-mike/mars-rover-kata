@@ -5,9 +5,6 @@ import { pipe } from "@effect-ts/core/Function"
 import {
     Config,
 } from "./config";
-import {
-    writeConsole,
-} from "./infra";
 import { app } from "./app";
 import { LoggerLive } from "./logger";
 import { ReadFileLive } from "./readFile";
@@ -21,13 +18,10 @@ const ConfigLive = L.pure(Config)({
 
 const LayerLive =
     ConfigLive["+++"](
-        LoggerLive[">+>"](ReadFileLive)["+++"](
-            ConsoleLive));
+        LoggerLive[">+>"](
+            ReadFileLive)["+++"](ConsoleLive));
 
 const main = (): Promise<void> => {
-    const env = {
-        writeConsole,
-    };
     return pipe(
         app,
         T.fold(
@@ -35,7 +29,6 @@ const main = (): Promise<void> => {
             (_) => undefined,
         ),
         T.provideSomeLayer(LayerLive),
-        T.provideAll(env),
         T.runPromise,
     );
 };

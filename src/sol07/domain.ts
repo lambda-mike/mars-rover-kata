@@ -149,10 +149,6 @@ export type AppError =
     | RoverCosntructionError
     ;
 
-export interface Environment {
-    writeConsole: (s: string) => T.UIO<void>;
-}
-
 export const mkPlanet =
     (w: number, h: number): E.Either<PlanetConstructionError, Planet> =>
         w > 0 && h > 0

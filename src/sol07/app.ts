@@ -4,7 +4,6 @@ import { pipe } from "@effect-ts/core/Function"
 import { Has } from "@effect-ts/core/Has"
 import {
     AppError,
-    Environment,
     parseCommands,
     parseObstacles,
     parsePlanet,
@@ -19,8 +18,7 @@ import { ReadFile, readFile } from "./readFile";
 import { Console } from "./console";
 
 type App = T.Effect<
-    Environment
-    & Has<Config>
+    Has<Config>
     & Has<Console>
     & Has<Logger>
     & Has<ReadFile>
@@ -30,8 +28,7 @@ export const app: App = pipe(
     T.gen(function*(_) {
         const config = yield* _(Config);
         const logger = yield* _(Logger);
-        const { readConsole } = yield* _(Console);
-        const writeConsole = yield* _(T.access((env: Environment) => env.writeConsole));
+        const { readConsole, writeConsole } = yield* _(Console);
 
         yield* _(writeConsole("Welcome to Mars, Rover!"));
 

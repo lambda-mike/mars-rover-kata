@@ -7,7 +7,6 @@ import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
 import {
   Cmd,
-  Environment,
   Obstacle,
   Orientation,
   Planet,
@@ -690,7 +689,7 @@ describe("Mars Kata", () => {
           log: [] as unknown[],
           warn: [] as unknown[],
         };
-        const consoleMock: Array<string> = [];
+        const consoleMock: Array<unknown> = [];
         const promptMock: Array<string> = [];
 
         const LoggerLive = L.pure(Logger)({
@@ -722,14 +721,12 @@ describe("Mars Kata", () => {
             promptMock.push(prompt);
             return cmds;
           }));
+        const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
           readConsole,
-        })
-        const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
-        const env: Environment = {
           writeConsole,
-        };
+        });
 
         const result = await pipe(
           app,
@@ -738,7 +735,6 @@ describe("Mars Kata", () => {
               LoggerLive)["+++"](
                 LoggerLive[">=>"](ReadFileLiveMock)["+++"](
                   ConsoleLiveMock))),
-          T.provideAll(env),
           T.runPromise,
         );
 
@@ -779,7 +775,7 @@ describe("Mars Kata", () => {
           log: [] as unknown[],
           warn: [] as unknown[],
         };
-        const consoleMock: Array<string> = [];
+        const consoleMock: Array<unknown> = [];
         const promptMock: Array<string> = [];
 
         const LoggerLive = L.pure(Logger)({
@@ -813,14 +809,12 @@ describe("Mars Kata", () => {
             promptMock.push(prompt);
             return "";
           }));
+        const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
           readConsole,
-        })
-        const writeConsole = jest.fn((s: string) => T.succeedWith(() => consoleMock.push(s)));
-        const env: Environment = {
           writeConsole,
-        };
+        })
 
         const result = await pipe(
           app,
@@ -829,7 +823,6 @@ describe("Mars Kata", () => {
               LoggerLive)["+++"](
                 LoggerLive[">=>"](ReadFileLiveMock)["+++"](
                   ConsoleLiveMock))),
-          T.provideAll(env),
           T.runPromiseExit,
         );
 
