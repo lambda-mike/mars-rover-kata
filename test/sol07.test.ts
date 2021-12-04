@@ -610,6 +610,7 @@ describe("Mars Kata", () => {
     describe("readFile", () => {
       it("properly reads existing file", async () => {
         //  TODO refactor to factory fn and reuse the helpe in all the tests
+        // or setup and clean before and after every test
         const logMock = {
           error: [] as unknown[],
           log: [] as unknown[],
