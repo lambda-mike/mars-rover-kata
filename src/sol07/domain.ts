@@ -1,5 +1,4 @@
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
-import * as T from "@effect-ts/core/Effect"
 import * as E from "@effect-ts/core/Either"
 import * as TP from "@effect-ts/core/Collections/Immutable/Tuple"
 import { makeAssociative } from "@effect-ts/core/Associative"

@@ -4,14 +4,18 @@ import * as T from "@effect-ts/core/Effect"
 import * as process from "node:process"
 import * as readline from "node:readline"
 import type { _A } from "@effect-ts/core/Utils"
-import { tag } from "@effect-ts/core/Has"
+import { Has, tag } from "@effect-ts/core/Has"
 import { pipe } from "@effect-ts/core"
 import {
     ReadConsoleError,
 } from "./domain";
 import { Logger } from "./logger";
 
-const consoleM = M.gen(function*(_) {
+const consoleM: M.Managed<
+    Has<Logger>,
+    ReadConsoleError,
+    readline.Interface
+> = M.gen(function*(_) {
     const logger = yield* _(Logger);
     return yield* _(M.make(
         (rl: readline.Interface) => pipe(
