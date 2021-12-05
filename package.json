@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm exec tsc --build --verbose",
     "test": "jest",
-    "app": "node dist/src/sol07/index.js"
+    "app": "node dist/src/sol08/index.js"
   },
   "repository": {
     "type": "git",
