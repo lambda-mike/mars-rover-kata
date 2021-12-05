@@ -34,7 +34,7 @@ import {
   travel,
 } from "../src/sol08/domain";
 import { app } from "../src/sol08/app";
-import { Config } from "../src/sol08/config";
+import { Environment } from "../src/sol08/environment";
 import { Logger } from "../src/sol08/logger";
 import { ReadFile, ReadFileLive, readFile } from "../src/sol08/readFile";
 import { Console } from "../src/sol08/console";
@@ -677,11 +677,13 @@ describe("Mars Kata", () => {
       it("make proper calls for happy path", async () => {
         const cmds = "F,B,L,R,F";
         const planetFile = "planet.txt";
-        const ConfigLive = L.pure(Config)({
-          _tag: "Config",
-          planetFile,
-          roverFile: "rover.txt",
-        } as const);
+        const EnvironmentLive = L.pure(Environment)({
+          _tag: "Environment",
+          readEnv: T.succeed({
+            PLANET_FILE: "planet.txt",
+            ROVER_FILE: "rover.txt",
+          })
+        });
         const logMock = {
           error: [] as unknown[],
           log: [] as unknown[],
@@ -729,7 +731,7 @@ describe("Mars Kata", () => {
         const result = await pipe(
           app,
           T.provideSomeLayer(
-            ConfigLive["+++"](
+            EnvironmentLive["+++"](
               LoggerLive)["+++"](
                 LoggerLive[">=>"](ReadFileLiveMock)["+++"](
                   ConsoleLiveMock))),
@@ -763,11 +765,13 @@ describe("Mars Kata", () => {
       });
       it("handles wrong planetFile error", async () => {
         const planetFile = "nope.txt";
-        const ConfigLive = L.pure(Config)({
-          _tag: "Config",
-          planetFile,
-          roverFile: "rover.txt",
-        } as const);
+        const EnvironmentLive = L.pure(Environment)({
+          _tag: "Environment",
+          readEnv: T.succeed({
+            PLANET_FILE: planetFile,
+            ROVER_FILE: "rover.txt",
+          })
+        });
         const logMock = {
           error: [] as unknown[],
           log: [] as unknown[],
@@ -817,7 +821,7 @@ describe("Mars Kata", () => {
         const result = await pipe(
           app,
           T.provideSomeLayer(
-            ConfigLive["+++"](
+            EnvironmentLive["+++"](
               LoggerLive)["+++"](
                 LoggerLive[">=>"](ReadFileLiveMock)["+++"](
                   ConsoleLiveMock))),

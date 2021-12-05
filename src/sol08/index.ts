@@ -1,23 +1,14 @@
 import * as process from "node:process"
 import * as T from "@effect-ts/core/Effect"
-import * as L from "@effect-ts/core/Effect/Layer"
 import { pipe } from "@effect-ts/core/Function"
-import {
-    Config,
-} from "./config";
+import { EnvironmentLive } from "./environment";
 import { app } from "./app";
 import { LoggerLive, SilentLoggerLive } from "./logger";
 import { ReadFileLive } from "./readFile";
 import { ConsoleLive } from "./console";
 
-const ConfigLive = L.pure(Config)({
-    _tag: "Config",
-    planetFile: "planet.txt",
-    roverFile: "rover.txt",
-} as const);
-
 const LayerLive =
-    ConfigLive["+++"](
+    EnvironmentLive["+++"](
         LoggerLive[">+>"](
             //SilentLoggerLive[">+>"](
             ReadFileLive)["+++"](ConsoleLive));

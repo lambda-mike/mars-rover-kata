@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm exec tsc --build --verbose",
     "test": "jest",
-    "app": "node dist/src/sol08/index.js"
+    "app": "PLANET_FILE='planet.txt' ROVER_FILE='rover.txt' node dist/src/sol08/index.js"
   },
   "repository": {
     "type": "git",

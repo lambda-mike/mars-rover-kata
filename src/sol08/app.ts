@@ -12,29 +12,29 @@ import {
     travel,
     TravelOutcome,
 } from "./domain";
-import { Config } from "./config";
+import { Environment, readEnv } from "./environment";
 import { Logger } from "./logger";
 import { ReadFile, readFile } from "./readFile";
 import { Console } from "./console";
 
 type App = T.Effect<
-    Has<Config>
-    & Has<Console>
+    Has<Console>
+    & Has<Environment>
     & Has<Logger>
     & Has<ReadFile>
     , AppError, TravelOutcome>;
 
 export const app: App = pipe(
     T.gen(function*(_) {
-        const config = yield* _(Config);
+        const env = yield* _(readEnv);
         const logger = yield* _(Logger);
         const { readConsole, writeConsole } = yield* _(Console);
 
         yield* _(writeConsole("Welcome to Mars, Rover!"));
 
         const [planetStr, roverStr] = yield* _(pipe(
-            readFile(config.planetFile),
-            T.zip(readFile(config.roverFile)),
+            readFile(env.PLANET_FILE),
+            T.zip(readFile(env.ROVER_FILE)),
         ));
         const planetTuple = planetStr.split("\n");
         if (planetTuple.length < 2) {

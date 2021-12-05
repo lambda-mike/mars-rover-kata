@@ -94,26 +94,28 @@ export interface ParseNumPairError {
     | "WrongInputStringError"
     | "WrongNumbersCountError"
     | "UnknownError"
+    ;
 }
 
 export interface NegativeSizeError {
-    kind: "NegativeSizeError",
+    kind: "NegativeSizeError";
 }
 
 export interface NegativeCoordinatesError {
-    kind: "NegativeCoordinatesError",
+    kind: "NegativeCoordinatesError";
 }
 
 export interface ParsePlanetError {
-    kind: "ParsePlanetError",
+    kind: "ParsePlanetError";
     error:
     | ParseNumPairError
     | NegativeSizeError
+    ;
 }
 
 export interface ParseObstacleError {
-    kind: "ParseObstacleError",
-    error: ParseNumPairError | NegativeCoordinatesError
+    kind: "ParseObstacleError";
+    error: ParseNumPairError | NegativeCoordinatesError;
 }
 
 export interface ParseOrientationError {
@@ -127,11 +129,27 @@ export interface ParseRoverError {
     | ParseNumPairError
     | ParseOrientationError
     | { kind: "InputError" }
+    ;
 }
 
 // Planet tuple input has less than 2 inputs!
 export interface MissingPlanetDataError {
-    kind: "MissingPlanetDataError"
+    kind: "MissingPlanetDataError";
+}
+
+export interface EnvironmentError {
+    kind: "EnvironmentError";
+    error: MissingVarEnvironmentError | EmptyVarEnvironmentError;
+    name: string;
+}
+
+export interface MissingVarEnvironmentError {
+    kind: "MissingVarEnvironmentError";
+    error: unknown;
+}
+
+export interface EmptyVarEnvironmentError {
+    kind: "EmptyVarEnvironmentError";
 }
 
 export type AppError =
@@ -146,6 +164,7 @@ export type AppError =
     | ReadFileError
     | ReadonlyArray<ParseObstacleError>
     | RoverCosntructionError
+    | EnvironmentError
     ;
 
 export const mkPlanet =
