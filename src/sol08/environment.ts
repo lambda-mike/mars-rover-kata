@@ -1,4 +1,6 @@
+import { makeAssociative } from "@effect-ts/core/Associative"
 import * as B from "@effect-ts/core/Boolean"
+import * as DSL from "@effect-ts/core/Prelude/DSL"
 import * as L from "@effect-ts/core/Effect/Layer"
 import * as S from "@effect-ts/core/String"
 import * as T from "@effect-ts/core/Effect"
@@ -24,23 +26,37 @@ const readEnvVar = (name: string) => pipe(
     T.filterOrFail(flow(S.isEmpty, B.not), (): EmptyVarEnvironmentError => ({
         kind: "EmptyVarEnvironmentError",
     })),
-    T.mapError((error): EnvironmentError => ({
+    T.mapError((error): Array<EnvironmentError> => [{
         kind: "EnvironmentError",
         error,
         name,
-    })),
+    }]),
 );
 
-// TODO capture all elements in parallel, return list of errors (non empty?)
-//T.getValidationApplicative()
+const EnvErrorsAssoc =
+    makeAssociative<Array<EnvironmentError>>((x, y) => [...x, ...y]);
+const EnvErrorsValidationApplicative =
+    T.getValidationApplicative(EnvErrorsAssoc);
+
 const mkEnvironment = T.succeedWith(() => ({
     _tag: "Environment" as const,
     readEnv: pipe(
-        T.do,
-        T.bindAllPar(() => ({
+        {
             PLANET_FILE: readEnvVar("PLANET_FILE"),
             ROVER_FILE: readEnvVar("ROVER_FILE"),
-        })),
+        },
+        DSL.structF(EnvErrorsValidationApplicative),
+    ),
+}));
+
+// This returns only the first error
+const mkEnvironmentSingleErr = T.succeedWith(() => ({
+    _tag: "Environment" as const,
+    readEnv: pipe(
+        T.struct({
+            PLANET_FILE: readEnvVar("PLANET_FILE"),
+            ROVER_FILE: readEnvVar("ROVER_FILE"),
+        }),
     ),
 }));
 

@@ -164,7 +164,7 @@ export type AppError =
     | ReadFileError
     | ReadonlyArray<ParseObstacleError>
     | RoverCosntructionError
-    | EnvironmentError
+    | Array<EnvironmentError>
     ;
 
 export const mkPlanet =
