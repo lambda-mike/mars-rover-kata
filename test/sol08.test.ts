@@ -1,3 +1,4 @@
+import * as readline from "node:readline"
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as L from "@effect-ts/core/Effect/Layer"
 import * as M from "@effect-ts/core/Effect/Managed"
@@ -716,14 +717,22 @@ describe("Mars Kata", () => {
           _tag: "ReadFile",
           readFile: readFileMock,
         });
+        // TODO replace input/output with mocked streams
+        const getConsole = M.succeedWith(() => {
+          return readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+          })
+        });
         const readConsole = jest.fn((prompt: string) =>
-          M.succeedWith(() => {
+          T.succeedWith(() => {
             promptMock.push(prompt);
             return cmds;
           }));
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
+          getConsole,
           readConsole,
           writeConsole,
         });
@@ -807,13 +816,21 @@ describe("Mars Kata", () => {
           readFile: readFileMock,
         });
         const readConsole = jest.fn((prompt: string) =>
-          M.succeedWith(() => {
+          T.succeedWith(() => {
             promptMock.push(prompt);
             return "";
           }));
+        // TODO replace input/output with mocked streams
+        const getConsole = M.succeedWith(() => {
+          return readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+          })
+        });
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
+          getConsole,
           readConsole,
           writeConsole,
         })

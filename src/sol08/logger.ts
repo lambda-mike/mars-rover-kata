@@ -11,6 +11,7 @@ export interface Logger {
 
 export const Logger = tag<Logger>();
 
+// TODO log to the stderr instead of stdout
 const log =
     (...args: unknown[]): T.UIO<void> =>
         T.succeedWith(() => console.log("[LOG]", ...args));

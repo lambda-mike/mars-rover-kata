@@ -4,32 +4,16 @@ import * as T from "@effect-ts/core/Effect"
 import * as process from "node:process"
 import * as readline from "node:readline"
 import type { _A } from "@effect-ts/core/Utils"
-import { Has, tag } from "@effect-ts/core/Has"
+import { tag } from "@effect-ts/core/Has"
 import { pipe } from "@effect-ts/core"
 import {
     ReadConsoleError,
 } from "./domain";
 import { Logger } from "./logger";
 
-const consoleM: M.Managed<
-    Has<Logger>,
-    ReadConsoleError,
-    readline.Interface
-> = M.gen(function*(_) {
-    const logger = yield* _(Logger);
-    return yield* _(M.make(
-        (rl: readline.Interface) => pipe(
-            T.gen(function*(_) {
-                yield* _(logger.log("[DBG] close"));
-                rl.close();
-                return;
-            }),
-            // result is ignored by M.make
-            T.result,
-        )
-    )(pipe(
-        logger.log("[DBG] acquire"),
-        T.andThen(
+const useConsole =
+    <R, E, A>(effect: T.Effect<R & readline.Interface, E, A>) =>
+        T.bracket_(
             T.tryCatch(() => {
                 return readline.createInterface({
                     input: process.stdin,
@@ -44,41 +28,103 @@ const consoleM: M.Managed<
                     }
                     ,
                 }),
-            )),
-    )));
-});
+            ),
+            (rl) => pipe(
+                effect,
+                T.provide(rl),
+            ),
+            (rl) => T.succeedWith(() => rl.close()),
+        );
+
+// const useConsole =
+//     <E, A, E1, R1, A1, R2, E2, A2>(
+//         effect: T.Effect<R1 & readline.Interface, E1, A1>
+//     ): T.Effect<R1 & readline.Interface, E1, A1> =>
+//         T.bracket_(
+//             T.tryCatch(() => {
+//                 return readline.createInterface({
+//                     input: process.stdin,
+//                     output: process.stdout,
+//                 })
+//             },
+//                 (error): ReadConsoleError => ({
+//                     kind: "ReadConsoleError",
+//                     error: {
+//                         kind: "ReadConsoleCreateError",
+//                         error,
+//                     }
+//                     ,
+//                 }),
+//             ),
+//             (rl) => pipe(
+//                 T.succeed(rl),
+//                 T.compose(effect),
+//             ),
+//             (rl) => T.succeedWith(() => rl.close()),
+//         );
+
+//     T.gen(function*(_) {
+//     const logger = yield* _(Logger);
+//     return yield* _(M.make(
+//         (rl: readline.Interface) => pipe(
+//             T.gen(function*(_) {
+//                 yield* _(logger.log("[DBG] close"));
+//                 rl.close();
+//                 return;
+//             }),
+//             // result is ignored by M.make
+//             T.result,
+//         )
+//     )(pipe(
+//         logger.log("[DBG] acquire"),
+//         T.andThen(
+//             T.tryCatch(() => {
+//                 return readline.createInterface({
+//                     input: process.stdin,
+//                     output: process.stdout,
+//                 })
+//             },
+//                 (error): ReadConsoleError => ({
+//                     kind: "ReadConsoleError",
+//                     error: {
+//                         kind: "ReadConsoleCreateError",
+//                         error,
+//                     }
+//                     ,
+//                 }),
+//             )),
+//     )));
+// });
 
 export const mkConsoleLive = M.succeedWith(() => ({
     _tag: "Console" as const,
+    useConsole,
     readConsole:
-        (prompt: string) =>
-            pipe(
-                consoleM,
-                M.chain((rl) => T.toManaged(pipe(
-                    T.tryCatchPromise<ReadConsoleError, string>(
-                        () => new Promise((resolve, reject) => {
-                            rl.question(prompt, (answer: string) => {
-                                // fatal error simulation
-                                if (answer.includes('X')) reject('X');
-                                return resolve(answer);
-                            });
-                        }),
-                        (error): ReadConsoleError => (
-                            {
-                                kind: "ReadConsoleError",
-                                error: {
-                                    kind: "ReadConsoleQuestionError",
-                                    error,
-                                }
-                                ,
-                            }
-                        ),
+        (prompt: string) => pipe(
+            T.accessM((rl: readline.Interface) => pipe(
+                T.tryCatchPromise<ReadConsoleError, string>(
+                    () => new Promise((resolve, reject) => {
+                        rl.question(prompt, (answer: string) => {
+                            // fatal error simulation
+                            if (answer.includes('X')) reject('X');
+                            return resolve(answer);
+                        });
+                    }),
+                    (error): ReadConsoleError => (
+                        {
+                            kind: "ReadConsoleError",
+                            error: {
+                                kind: "ReadConsoleQuestionError",
+                                error,
+                            },
+                        }
                     ),
-                    T.tap((answer) =>
-                        T.accessServiceM(Logger)((logger) =>
-                            logger.log("[DBG] answer", answer))),
-                ))),
-            ),
+                ),
+                T.tap((answer) =>
+                    T.accessServiceM(Logger)((logger) =>
+                        logger.log("[DBG] answer", answer))),
+            ))
+        ),
     writeConsole:
         (...xs: unknown[]): T.UIO<void> =>
             T.succeedWith(() => console.log(...xs)),
@@ -87,5 +133,8 @@ export const mkConsoleLive = M.succeedWith(() => ({
 export interface Console extends _A<typeof mkConsoleLive> { }
 
 export const Console = tag<Console>();
+
+export const { readConsole, writeConsole } =
+    T.deriveLifted(Console)(["readConsole", "writeConsole"], [], []);
 
 export const ConsoleLive = L.fromManaged(Console)(mkConsoleLive);
