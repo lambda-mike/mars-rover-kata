@@ -55,7 +55,7 @@ const loop = (
 });
 
 export const app: App = pipe(
-    T.genM(function*(_) {
+    T.gen(function*(_) {
         const env = yield* _(readEnv);
         const logger = yield* _(Logger);
         const { consoleM } = yield* _(Console);
@@ -78,13 +78,10 @@ export const app: App = pipe(
         yield* _(logger.log("Rover", rover));
         const roverRef = yield* _(Ref.makeRef(rover))
 
-        return yield* _(M.chain_(
-            consoleM,
-            (readLine) => pipe(
-                loop(planet, obstacles, roverRef),
-                T.forever,
-                T.provide(readLine),
-                T.toManaged,
-            )));
+        return yield* _(pipe(
+            loop(planet, obstacles, roverRef),
+            T.forever,
+            T.provideSomeManaged(consoleM),
+        ));
     }),
 );
