@@ -1,3 +1,4 @@
+import * as process from "node:process"
 import * as readline from "node:readline"
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as L from "@effect-ts/core/Effect/Layer"
@@ -38,7 +39,7 @@ import { app } from "../src/sol08/app";
 import { Environment } from "../src/sol08/environment";
 import { Logger } from "../src/sol08/logger";
 import { ReadFile, ReadFileLive, readFile } from "../src/sol08/readFile";
-import { Console } from "../src/sol08/console";
+import { Console, IReadline, } from "../src/sol08/console";
 
 describe("Mars Kata", () => {
   describe("Sol01", () => {
@@ -718,12 +719,11 @@ describe("Mars Kata", () => {
           readFile: readFileMock,
         });
         // TODO replace input/output with mocked streams
-        const getConsole = M.succeedWith(() => {
-          return readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-          })
+        const consoleM = M.gen(function*(_) {
+          yield* _(Logger);
+          return { readLine: readline.createInterface({ input: process.stdin }) };
         });
+        const useConsole = jest.fn();
         const readConsole = jest.fn((prompt: string) =>
           T.succeedWith(() => {
             promptMock.push(prompt);
@@ -732,7 +732,8 @@ describe("Mars Kata", () => {
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
-          getConsole,
+          consoleM,
+          useConsole,
           readConsole,
           writeConsole,
         });
@@ -820,17 +821,16 @@ describe("Mars Kata", () => {
             promptMock.push(prompt);
             return "";
           }));
-        // TODO replace input/output with mocked streams
-        const getConsole = M.succeedWith(() => {
-          return readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-          })
+        const consoleM = M.gen(function*(_) {
+          yield* _(Logger);
+          return { readLine: readline.createInterface({ input: process.stdin }) };
         });
+        const useConsole = jest.fn();
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
-          getConsole,
+          consoleM,
+          useConsole,
           readConsole,
           writeConsole,
         })

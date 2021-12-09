@@ -34,17 +34,15 @@ type App = T.Effect<
 const prompt =
     "Please, enter commands for the Rover in 'F,B,R,L' format: ";
 
+// TODO remove console.logs
 const loop = (
     planet: Planet,
     obstacles: ReadonlyArray<Obstacle>,
     roverRef: Ref.Ref<Rover>,
 ) => T.gen(function*(_) {
-    console.log('loop');
     const logger = yield* _(Logger);
 
-    console.log('pre');
     const cmdsStr = yield* _(readConsole(prompt));
-    console.log('post');
     const cmds = yield* _(parseCommands(cmdsStr));
     yield* _(logger.log(`Rover is executing commands: ${cmds}`));
 
@@ -53,7 +51,6 @@ const loop = (
     yield* _(Ref.update(() => outcome.rover)(roverRef));
     yield* _(writeConsole(`Rover position: ${renderTravelOutcome(outcome)}`));
 
-    console.log('outcome');
     return outcome;
 });
 
@@ -61,7 +58,7 @@ export const app: App = pipe(
     T.genM(function*(_) {
         const env = yield* _(readEnv);
         const logger = yield* _(Logger);
-        const { getConsole } = yield* _(Console);
+        const { useConsole } = yield* _(Console);
 
         yield* _(writeConsole("Welcome to Mars, Rover!"));
 
@@ -81,51 +78,10 @@ export const app: App = pipe(
         yield* _(logger.log("Rover", rover));
         const roverRef = yield* _(Ref.makeRef(rover))
 
-        // TODO try to use
-        //T.provideServiceManaged()
-        //T.provideSomeManaged()
-
-        // M.useNow()
-        // T.bracket()
-        //M.useForever()
-        // T.provide()
-        // yield* _(pipe(
-        //     getConsole,
-        //     M.chain((rl) => {
-        //         console.log("rl")
-        //         const rlClo = rl;
-        //         return pipe(
-        //             loop(planet, obstacles, roverRef),
-        //             T.provide(rlClo),
-        //             T.forever,
-        //             T.toManaged,
-        //         );
-        //     }),
-        //     M.useForever,
-        //     // T.toManaged,
-        //     // M.useForever,
-        // ),
-        // );
-        // //TODO use bbracket do not use Managed for Console
-        const y = T.memoize(() => T.succeedWith(() => (console.log('innermem'), 3)));
-        const fy = yield* _(y);
-        const yy = yield* _(fy(undefined));
-        const zz = yield* _(fy(3));
-        console.log('mem', yy, zz);
-        const x = pipe(
+        return yield* _(pipe(
             loop(planet, obstacles, roverRef),
-            T.provideSomeManaged(getConsole),
             T.forever,
-            T.toManaged,
-        )
-
-        // M.useNow()
-        yield* _(pipe(
-            x,
-            M.useForever,
-        ),
-            // T.toManaged,
-            // M.useForever,
-        );
+            useConsole,
+        ));
     }),
 );
