@@ -58,7 +58,7 @@ export const app: App = pipe(
     T.genM(function*(_) {
         const env = yield* _(readEnv);
         const logger = yield* _(Logger);
-        const { useConsole } = yield* _(Console);
+        const { consoleM } = yield* _(Console);
 
         yield* _(writeConsole("Welcome to Mars, Rover!"));
 
@@ -78,10 +78,13 @@ export const app: App = pipe(
         yield* _(logger.log("Rover", rover));
         const roverRef = yield* _(Ref.makeRef(rover))
 
-        return yield* _(pipe(
-            loop(planet, obstacles, roverRef),
-            T.forever,
-            useConsole,
-        ));
+        return yield* _(M.chain_(
+            consoleM,
+            (readLine) => pipe(
+                loop(planet, obstacles, roverRef),
+                T.forever,
+                T.provide(readLine),
+                T.toManaged,
+            )));
     }),
 );
