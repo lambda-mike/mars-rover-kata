@@ -1,10 +1,10 @@
-import * as process from "node:process"
 import * as readline from "node:readline"
 import * as A from "@effect-ts/core/Collections/Immutable/Array"
 import * as L from "@effect-ts/core/Effect/Layer"
 import * as M from "@effect-ts/core/Effect/Managed"
 import * as T from "@effect-ts/core/Effect"
 import * as Ex from "@effect-ts/system/Exit"
+import * as Ca from "@effect-ts/system/Cause"
 import * as E from "@effect-ts/core/Either"
 import { pipe } from "@effect-ts/core/Function"
 import {
@@ -718,17 +718,21 @@ describe("Mars Kata", () => {
           _tag: "ReadFile",
           readFile: readFileMock,
         });
-        // TODO replace input/output with mocked streams
-        const consoleM = M.gen(function*(_) {
-          yield* _(Logger);
-          return { readLine: readline.createInterface({ input: process.stdin }) };
-        });
+        const consoleM =
+          M.compose_(M.service(Logger), M.succeed<IReadline>(null as any));
         const useConsole = jest.fn();
-        const readConsole = jest.fn((prompt: string) =>
-          T.succeedWith(() => {
-            promptMock.push(prompt);
-            return cmds;
-          }));
+        const expectedConsoleFailure = {
+          kind: "ReadConsoleQuestionError",
+          error: "X"
+        };
+        const readConsole = jest.fn()
+          .mockImplementationOnce((prompt: string) =>
+            T.succeedWith(() => {
+              promptMock.push(prompt);
+              return cmds;
+            }))
+          .mockImplementation((_prompt: string) =>
+            T.fail(expectedConsoleFailure));
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
@@ -745,21 +749,14 @@ describe("Mars Kata", () => {
               LoggerLive)["+++"](
                 LoggerLive[">=>"](ReadFileLiveMock)["+++"](
                   ConsoleLiveMock))),
-          T.runPromise,
+          T.runPromiseExit,
         );
 
-        expect(result).toStrictEqual({
-          kind: "Normal",
-          rover: {
-            orientation: "W",
-            x: 0,
-            y: 3,
-          },
-        });
+        Ex.assertsFailure(result);
+        expect(result.cause).toStrictEqual(Ca.fail(expectedConsoleFailure));
         expect(consoleMock).toStrictEqual([
           "Welcome to Mars, Rover!",
           "Rover position: 0:3:W",
-          "Mission completed!",
         ]);
         expect(promptMock).toStrictEqual(["Please, enter commands for the Rover in 'F,B,R,L' format: "]);
         expect(logMock).toStrictEqual({
@@ -823,7 +820,8 @@ describe("Mars Kata", () => {
           }));
         const consoleM = M.gen(function*(_) {
           yield* _(Logger);
-          return { readLine: readline.createInterface({ input: process.stdin }) };
+          // It won't be used in this test, so just to please typesystem
+          return null as any as { readLine: readline.Interface };
         });
         const useConsole = jest.fn();
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
