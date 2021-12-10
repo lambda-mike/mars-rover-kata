@@ -1,4 +1,3 @@
-import * as M from "@effect-ts/core/Effect/Managed"
 import * as Ref from "@effect-ts/core/Effect/Ref"
 import * as T from "@effect-ts/core/Effect"
 import { pipe } from "@effect-ts/core/Function"
@@ -34,7 +33,6 @@ type App = T.Effect<
 const prompt =
     "Please, enter commands for the Rover in 'F,B,R,L' format: ";
 
-// TODO remove console.logs
 const loop = (
     planet: Planet,
     obstacles: ReadonlyArray<Obstacle>,
@@ -81,11 +79,16 @@ export const app: App = pipe(
         return yield* _(pipe(
             loop(planet, obstacles, roverRef),
             T.catchAll((err) => T.gen(function*(_) {
-                yield* _(logger.error("Error ocurred:", err));
+                yield* _(logger.error("Error in loop:", err));
+                // Continue regardless
                 return yield* _(T.succeed(null));
             })),
             T.forever,
             T.provideSomeManaged(consoleM),
         ));
     }),
+    T.tapError((err) => pipe(
+        T.service(Logger),
+        T.chain((logger) => logger.error("Error detected:", err)),
+    )),
 );

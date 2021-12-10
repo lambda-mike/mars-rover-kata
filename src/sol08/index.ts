@@ -16,11 +16,10 @@ const LayerLive =
 const main = (): Promise<void> => {
     return pipe(
         app,
-        // TODO move logging error into the app? catch all bugs? and continue
-        T.fold(
-            (err) => console.error("Mission failed:", err),
-            (_) => undefined,
-        ),
+        T.catchAllDefect((defect) => {
+            console.error("Defect detected:", defect);
+            return T.fail(defect);
+        }),
         T.provideSomeLayer(LayerLive),
         T.runPromise,
     );

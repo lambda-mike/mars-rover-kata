@@ -830,7 +830,15 @@ describe("Mars Kata", () => {
           useConsole,
           readConsole,
           writeConsole,
-        })
+        });
+        const expectedError = [
+          "Error detected:",
+          {
+            error: null,
+            filename: planetFile,
+            kind: "ReadFileError",
+          },
+        ]
 
         const result = await pipe(
           app,
@@ -847,7 +855,7 @@ describe("Mars Kata", () => {
         expect(promptMock).toStrictEqual([]);
         expect(logMock).toStrictEqual({
           log: [],
-          error: [],
+          error: [expectedError],
           warn: [],
         });
       });

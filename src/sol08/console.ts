@@ -35,6 +35,8 @@ const consoleM: M.Managed<
         logger.log("[DBG] acquire"),
         T.andThen(
             T.tryCatch(() => {
+                // Uncomment to test defects handling
+                //throw "test";
                 return {
                     readLine: readline.createInterface({
                         input: process.stdin,
@@ -97,7 +99,8 @@ export const mkConsoleLive = M.succeedWith(() => ({
                         readLine.question(prompt, (answer: string) => {
                             // error simulation
                             if (answer.includes('X')) reject('X');
-                            // defect simulation
+                            // defect simulation but outside of app context
+                            // due to being in callback
                             if (answer.includes('Q')) throw "Boom!"
                             return resolve(answer);
                         });
