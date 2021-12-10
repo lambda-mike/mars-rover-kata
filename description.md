@@ -72,3 +72,11 @@ Use custom Higher-Kinded Typeclasses as ports towards the infrastructure
 - Use implicit parameters in application service function
 - Test with mock instances
 
+## VX - Extra ideas
+
+SolX extra ideas to implement:
+
+- read inputs file names as env vars,
+- add loop so you can navigate Rover from place to place,
+- acquire console once and release at the end of the program,
+- render animated planet and rover in console after every cmd.
