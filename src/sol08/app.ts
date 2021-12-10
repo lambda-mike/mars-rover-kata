@@ -80,6 +80,10 @@ export const app: App = pipe(
 
         return yield* _(pipe(
             loop(planet, obstacles, roverRef),
+            T.catchAll((err) => T.gen(function*(_) {
+                yield* _(logger.error("Error ocurred:", err));
+                return yield* _(T.succeed(null));
+            })),
             T.forever,
             T.provideSomeManaged(consoleM),
         ));

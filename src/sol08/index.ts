@@ -16,6 +16,7 @@ const LayerLive =
 const main = (): Promise<void> => {
     return pipe(
         app,
+        // TODO move logging error into the app? catch all bugs? and continue
         T.fold(
             (err) => console.error("Mission failed:", err),
             (_) => undefined,

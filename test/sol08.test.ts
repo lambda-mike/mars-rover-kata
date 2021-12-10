@@ -721,18 +721,17 @@ describe("Mars Kata", () => {
         const consoleM =
           M.compose_(M.service(Logger), M.succeed<IReadline>(null as any));
         const useConsole = jest.fn();
-        const expectedConsoleFailure = {
-          kind: "ReadConsoleQuestionError",
-          error: "X"
-        };
+        const expectedConsoleDeath = "Boom!";
         const readConsole = jest.fn()
           .mockImplementationOnce((prompt: string) =>
             T.succeedWith(() => {
               promptMock.push(prompt);
               return cmds;
             }))
-          .mockImplementation((_prompt: string) =>
-            T.fail(expectedConsoleFailure));
+          .mockImplementation((_prompt: string) => {
+            // Simulate defect
+            throw expectedConsoleDeath;
+          });
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
         const ConsoleLiveMock = L.pure(Console)({
           _tag: "Console",
@@ -753,7 +752,7 @@ describe("Mars Kata", () => {
         );
 
         Ex.assertsFailure(result);
-        expect(result.cause).toStrictEqual(Ca.fail(expectedConsoleFailure));
+        expect(result.cause).toStrictEqual(Ca.die(expectedConsoleDeath));
         expect(consoleMock).toStrictEqual([
           "Welcome to Mars, Rover!",
           "Rover position: 0:3:W",

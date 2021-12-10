@@ -95,8 +95,10 @@ export const mkConsoleLive = M.succeedWith(() => ({
                 T.tryCatchPromise<ReadConsoleError, string>(
                     () => new Promise((resolve, reject) => {
                         readLine.question(prompt, (answer: string) => {
-                            // fatal error simulation
+                            // error simulation
                             if (answer.includes('X')) reject('X');
+                            // defect simulation
+                            if (answer.includes('Q')) throw "Boom!"
                             return resolve(answer);
                         });
                     }),
