@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+
+    "target": "ES2018",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "paths": {
+      "@app/*": ["./src/*"],
+      "@app": ["./src"]
+    },
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "checkJs": false,
+    "declaration": true,
+    "downlevelIteration": true,
+    "noErrorTruncation": true,
+    "esModuleInterop": true,
+    "preserveSymlinks": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "dist"]
+}
