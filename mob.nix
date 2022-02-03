@@ -20,7 +20,7 @@ buildGoPackage rec {
     goPackagePath = "github.com/${owner}/${repo}/";
 
     subPackages = [ "." ];
-    
+
     meta = {
       description = "Remote mob programming tool";
       homepage = "https://mob.sh";

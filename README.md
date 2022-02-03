@@ -4,6 +4,8 @@
 
 Use `nix-shell` directly or install `direnv`.
 
+Inside nix-shell:
+
 `pnpm install`
 
 ## Description
@@ -14,7 +16,7 @@ Offline copy at: `description.md`
 
 ## Testing
 
-`pnpm t`
+`pnpm test`
 
 `pnpm t -- --watch`
 
@@ -35,3 +37,13 @@ Watch mode:
 ## Misc
 
 `pnpm clean`
+
+## Mob.sh
+
+```sh
+mob help
+
+mob start
+mob next
+mob done # then commit and push as usual
+```
