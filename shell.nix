@@ -21,6 +21,9 @@ in pkgs.mkShell rec {
     pkgs.nodejs-16_x
     pkgs.nodePackages.pnpm
   ];
-  # TODO add env var for mob timer
+
+  shellHook = ''
+    export MOB_TIMER_ROOM=you-team-name-goes-here
+  '';
 
 }
