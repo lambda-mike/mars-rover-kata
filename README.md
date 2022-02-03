@@ -10,6 +10,8 @@ Inside nix-shell:
 
 ## Description
 
+Original kata and rules: https://kata-log.rocks/mars-rover-kata
+
 https://github.com/doubleloop-io/applied-fp-workshop-scala/blob/main/marsroverkata/TODO.md
 
 Offline copy at: `description.md`
