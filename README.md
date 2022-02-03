@@ -40,10 +40,13 @@ Watch mode:
 
 ## Mob.sh
 
+Edit `MOB_TIMER_ROOM` in `shell.nix` before you start mob session!
+
 ```sh
 mob help
 
-mob start
+mob start 7 # 7 min
 mob next
+mob break 5
 mob done # then commit and push as usual
 ```

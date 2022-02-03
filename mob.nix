@@ -1,14 +1,14 @@
 {withSpeech ? false, makeWrapper, espeak-ng, buildGoPackage, fetchFromGitHub, lib, ...}:
 buildGoPackage rec {
     pname = "mob.sh";
-    version = "1.3.0";
+    version = "2.3.0";
     owner = "remotemobprogramming";
     repo = "mob";
     src = fetchFromGitHub {
       owner = owner;
       repo = repo;
       rev = "v${version}";
-      sha256 = "04x6cl2r4ja41cmy82p5apyavmdvak6jsclzf2l7islf0pmsnddv";
+      sha256 = "03vpvm1krnn9l4q00bpxg2mlq3vy0z7nxvqb02yh6ccrf8y3rfxy";
     };
 
     buildInputs =
