@@ -1,32 +1,18 @@
-import { pipe } from "@effect-ts/system/Function"
-
-import { makeAssociative } from "@effect-ts/core/Associative"
-import * as R from "@effect-ts/core/Collections/Immutable/Dictionary"
 import * as E from "@effect-ts/core/Either"
 
-test("example 04", () => {
-    // const ValidationApplicative = E.getValidationApplicative(
-    //     makeAssociative<string>((l, r) => `(${l})(${r})`)
-    // )
-
-    // const ValidationAssociative = E.getValidationAssociative(
-    //     makeAssociative<Array<string>>((l, r) => [...l, ...r]),
-    //     makeAssociative<Array<string>>((l, r) => [...l, ...r]),
-    // )
-    // const ValidationApplicative = E.getValidationApplicative(
-    //     ValidationAssociative
-    // )
-
-    const ValidationApplicative = E.getValidationApplicative(
-        makeAssociative<Array<string>>((l, r) => [...l, ...r])
-    )
-
-    const traverse = R.forEachF(ValidationApplicative)
-
-    const result = pipe(
-        { a: 0, b: 7, c: 8 },
-        traverse((n) => (n > 3 ? E.left(["bad" + n]) : E.right(n)))
-    )
-
-    //console.log(result)
-})
+test("example E.gen", () => {
+    const fn = (x: number): E.Either<string, number> => {
+        if (x > 3) {
+            return E.left(`number ${x} is too big!`);
+        }
+        return E.right(x);
+    };
+    const input = 2;
+    const result = E.gen(function*(_) {
+        const x = yield* _(fn(input));
+        const y = yield* _(fn(x + 1));
+        return x + y;
+    });
+    //console.log(result);
+    expect(result).toStrictEqual(E.right(5));
+});
