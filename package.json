@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "pnpm exec tsc --build --verbose",
     "test": "jest",
-    "app": "node dist/src/sol07/index.js"
+    "app": "PLANET_FILE='planet.txt' ROVER_FILE='rover.txt' node dist/src/sol09/index.js 2> logs.txt",
+    "app-logs": "PLANET_FILE='planet.txt' ROVER_FILE='rover.txt' node dist/src/sol09/index.js"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,5 @@
+.direnv
+
 logs.txt
 # TS proj
 *.js
