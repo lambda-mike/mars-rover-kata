@@ -1,5 +1,7 @@
 # mars-rover-kata
 
+[![MarsRoverKataTests](https://github.com/lambda-mike/mars-rover-kata/actions/workflows/main.yml/badge.svg)](https://github.com/lambda-mike/mars-rover-kata/actions/workflows/main.yml)
+
 This is a "game" inspired by the mars rover kata for Scala:
 
 https://github.com/doubleloop-io/applied-fp-workshop-scala/blob/main/marsroverkata/TODO.md
