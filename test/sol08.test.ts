@@ -615,7 +615,7 @@ describe("Mars Kata", () => {
           log: [] as unknown[],
           warn: [] as unknown[],
         };
-        const LoggerLive = L.pure(Logger)({
+        const LoggerLive = L.fromValue(Logger)({
           _tag: "Logger",
           error: jest.fn((...args: unknown[]) =>
             T.succeedWith(() => {
@@ -646,7 +646,7 @@ describe("Mars Kata", () => {
           log: [] as unknown[],
           warn: [] as unknown[],
         };
-        const LoggerLive = L.pure(Logger)({
+        const LoggerLive = L.fromValue(Logger)({
           _tag: "Logger",
           error: jest.fn((...args: unknown[]) =>
             T.succeedWith(() => {
@@ -679,7 +679,7 @@ describe("Mars Kata", () => {
       it("make proper calls for happy path", async () => {
         const cmds = "F,B,L,R,F";
         const planetFile = "planet.txt";
-        const EnvironmentLive = L.pure(Environment)({
+        const EnvironmentLive = L.fromValue(Environment)({
           _tag: "Environment",
           readEnv: T.succeed({
             PLANET_FILE: "planet.txt",
@@ -694,7 +694,7 @@ describe("Mars Kata", () => {
         const consoleMock: Array<unknown> = [];
         const promptMock: Array<string> = [];
 
-        const LoggerLive = L.pure(Logger)({
+        const LoggerLive = L.fromValue(Logger)({
           _tag: "Logger",
           error: jest.fn((...args: unknown[]) =>
             T.succeedWith(() => {
@@ -714,7 +714,7 @@ describe("Mars Kata", () => {
             filename === planetFile
               ? "5x4\n1,2 0,0 3,4"
               : "1,3:W"));
-        const ReadFileLiveMock = L.pure(ReadFile)({
+        const ReadFileLiveMock = L.fromValue(ReadFile)({
           _tag: "ReadFile",
           readFile: readFileMock,
         });
@@ -733,7 +733,7 @@ describe("Mars Kata", () => {
             throw expectedConsoleDeath;
           });
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
-        const ConsoleLiveMock = L.pure(Console)({
+        const ConsoleLiveMock = L.fromValue(Console)({
           _tag: "Console",
           consoleM,
           useConsole,
@@ -771,7 +771,7 @@ describe("Mars Kata", () => {
       });
       it("handles wrong planetFile error", async () => {
         const planetFile = "nope.txt";
-        const EnvironmentLive = L.pure(Environment)({
+        const EnvironmentLive = L.fromValue(Environment)({
           _tag: "Environment",
           readEnv: T.succeed({
             PLANET_FILE: planetFile,
@@ -786,7 +786,7 @@ describe("Mars Kata", () => {
         const consoleMock: Array<unknown> = [];
         const promptMock: Array<string> = [];
 
-        const LoggerLive = L.pure(Logger)({
+        const LoggerLive = L.fromValue(Logger)({
           _tag: "Logger",
           error: jest.fn((...args: unknown[]) =>
             T.succeedWith(() => {
@@ -808,7 +808,7 @@ describe("Mars Kata", () => {
         });
         const readFileMock = jest.fn((f: string) =>
           T.fail(readFileErr(f)));
-        const ReadFileLiveMock = L.pure(ReadFile)({
+        const ReadFileLiveMock = L.fromValue(ReadFile)({
           _tag: "ReadFile",
           readFile: readFileMock,
         });
@@ -824,7 +824,7 @@ describe("Mars Kata", () => {
         });
         const useConsole = jest.fn();
         const writeConsole = jest.fn((...xs: unknown[]) => T.succeedWith(() => consoleMock.push(...xs)));
-        const ConsoleLiveMock = L.pure(Console)({
+        const ConsoleLiveMock = L.fromValue(Console)({
           _tag: "Console",
           consoleM,
           useConsole,

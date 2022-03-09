@@ -23,14 +23,14 @@ const warn =
     (...args: unknown[]): T.UIO<void> =>
         T.succeedWith(() => console.warn("[WARN]", ...args));
 
-export const LoggerLive = L.pure(Logger)({
+export const LoggerLive = L.fromValue(Logger)({
     _tag: "Logger",
     log,
     error,
     warn,
 });
 
-export const SilentLoggerLive = L.pure(Logger)({
+export const SilentLoggerLive = L.fromValue(Logger)({
     _tag: "Logger",
     log: () => T.succeed(undefined),
     error: () => T.succeed(undefined),

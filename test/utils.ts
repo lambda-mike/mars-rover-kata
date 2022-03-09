@@ -19,27 +19,27 @@ export class TestLogger {
     readonly log: Array<unknown> = [];
     readonly warn: Array<unknown> = [];
     readonly debug: Array<unknown> = [];
-    readonly Live: L.Layer<unknown, never, Has<Logger>>;
+    readonly Live: L.Layer<{}, never, Has<Logger>>;
 
     constructor() {
-        this.Live = L.pure(Logger)({
-          _tag: "Logger",
-          error: jest.fn((...args: Array<unknown>) =>
-            T.succeedWith(() => {
-              this.error.push([...args]);
-            })),
-          log: jest.fn((...args: Array<unknown>) =>
-            T.succeedWith(() => {
-              this.log.push([...args]);
-            })),
-          warn: jest.fn((...args: Array<unknown>) =>
-            T.succeedWith(() => {
-              this.warn.push([...args]);
-            })),
-          debug: jest.fn((...args: Array<unknown>) =>
-            T.succeedWith(() => {
-              this.debug.push([...args]);
-            })),
+        this.Live = L.fromValue(Logger)({
+            _tag: "Logger",
+            error: jest.fn((...args: Array<unknown>) =>
+                T.succeedWith(() => {
+                    this.error.push([...args]);
+                })),
+            log: jest.fn((...args: Array<unknown>) =>
+                T.succeedWith(() => {
+                    this.log.push([...args]);
+                })),
+            warn: jest.fn((...args: Array<unknown>) =>
+                T.succeedWith(() => {
+                    this.warn.push([...args]);
+                })),
+            debug: jest.fn((...args: Array<unknown>) =>
+                T.succeedWith(() => {
+                    this.debug.push([...args]);
+                })),
         } as const);
     }
 }
@@ -52,9 +52,9 @@ export class TestConsole {
 
     readonly promptMock: Array<string> = [];
     readonly consoleMock: Array<unknown> = [];
-    readonly Live: L.Layer<unknown, never, Has<Console>>;
+    readonly Live: L.Layer<{}, never, Has<Console>>;
 
-    constructor () {
+    constructor() {
         this.cmds = "";
 
         const consoleM =
@@ -66,7 +66,7 @@ export class TestConsole {
         const clearConsole = jest.fn(() => T.succeed(null));
         const moveCursor = jest.fn(() => T.succeed(null));
 
-        this.Live = L.pure(Console)({
+        this.Live = L.fromValue(Console)({
             _tag: "Console",
             consoleM,
             useConsole,
@@ -76,7 +76,7 @@ export class TestConsole {
             clearScreenDown: this.clearScreenDown,
             cursorTo: this.cursorTo,
             moveCursor,
-            });
+        });
     }
 }
 
@@ -86,18 +86,18 @@ export class TestReadFile {
     public files: HM.HashMap<FileName, Contents> = HM.make();
     public readFileMock = jest.fn(
         (filename: string): T.Effect<unknown, ReadFileError, string> => pipe(
-        HM.get_(this.files, filename),
-        O.fold(
-            () => { throw `File '${filename}' has not been mocked!` },
-            T.succeed,
-        ),
-    ));
+            HM.get_(this.files, filename),
+            O.fold(
+                () => { throw `File '${filename}' has not been mocked!` },
+                T.succeed,
+            ),
+        ));
     readonly Live;
 
     constructor() {
-        this.Live = L.pure(ReadFile)({
-          _tag: "ReadFile",
-          readFile: this.readFileMock,
+        this.Live = L.fromValue(ReadFile)({
+            _tag: "ReadFile",
+            readFile: this.readFileMock,
         });
     }
 }
