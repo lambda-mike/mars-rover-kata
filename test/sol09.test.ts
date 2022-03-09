@@ -661,7 +661,7 @@ describe("Mars Kata", () => {
       it("make proper calls for happy path", async () => {
         const planetFile = "planet.txt";
         const roverFile = "rover.txt";
-        const EnvironmentLive = L.pure(Environment)({
+        const EnvironmentLive = L.fromValue(Environment)({
           _tag: "Environment",
           readEnv: T.succeed({
             PLANET_FILE: planetFile,
@@ -707,7 +707,7 @@ describe("Mars Kata", () => {
           "     .#...\n     .O...\n     .....\n     O....",
           "\nRover position: 1:3:W",
           "  ^\n< W >\n  v",
-            "     #....\n     .O...\n     .....\n     O....",
+          "     #....\n     .O...\n     .....\n     O....",
           "\nRover position: 0:3:W",
           "\nExecuting cmds: F",
           "  ^\n< W >\n  v",
@@ -731,10 +731,10 @@ describe("Mars Kata", () => {
         expect(testConsole.promptMock).toStrictEqual(
           ["\nPlease, enter commands for the Rover in 'F,B,R,L' format: "]);
         expect(testLogger.log).toStrictEqual([
-            ["Planet", { width: 5, height: 4 }],
-            ["Obstacles", [{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]],
-            ["Rover", { x: 1, y: 3, orientation: "W" }],
-            ["Rover is executing commands: F,B,L,R,F"],
+          ["Planet", { width: 5, height: 4 }],
+          ["Obstacles", [{ pos: { x: 1, y: 2 } }, { pos: { x: 0, y: 0 } }, { pos: { x: 3, y: 4 } }]],
+          ["Rover", { x: 1, y: 3, orientation: "W" }],
+          ["Rover is executing commands: F,B,L,R,F"],
         ])
         expect(testLogger.error).toStrictEqual([]);
         expect(testLogger.warn).toStrictEqual([]);
@@ -742,7 +742,7 @@ describe("Mars Kata", () => {
       });
       it("handles wrong planetFile error", async () => {
         const planetFile = "nope.txt";
-        const EnvironmentLive = L.pure(Environment)({
+        const EnvironmentLive = L.fromValue(Environment)({
           _tag: "Environment",
           readEnv: T.succeed({
             PLANET_FILE: planetFile,
@@ -770,7 +770,7 @@ describe("Mars Kata", () => {
             kind: "ReadFileError",
           },
         ]
-        const ConsoleRendererLiveMock = L.pure(ConsoleRenderer)({
+        const ConsoleRendererLiveMock = L.fromValue(ConsoleRenderer)({
           _tag: "ConsoleRenderer",
           render: jest.fn(),
         });

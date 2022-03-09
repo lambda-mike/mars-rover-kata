@@ -31,7 +31,7 @@ const debug =
         T.succeedWith(() => consoleStderr.debug("[DBG]", ...args));
 
 
-export const LoggerLive = L.pure(Logger)({
+export const LoggerLive = L.fromValue(Logger)({
     _tag: "Logger",
     log,
     error,
@@ -39,7 +39,7 @@ export const LoggerLive = L.pure(Logger)({
     debug,
 });
 
-export const SilentLoggerLive = L.pure(Logger)({
+export const SilentLoggerLive = L.fromValue(Logger)({
     _tag: "Logger",
     log: () => T.succeed(undefined),
     error: () => T.succeed(undefined),

@@ -10,7 +10,7 @@ import { LoggerLive, SilentLoggerLive } from "./logger";
 import { ReadFileLive } from "./readFile";
 import { ConsoleLive } from "./console";
 
-const ConfigLive = L.pure(Config)({
+const ConfigLive = L.fromValue(Config)({
     _tag: "Config",
     planetFile: "planet.txt",
     roverFile: "rover.txt",

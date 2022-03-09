@@ -91,7 +91,7 @@ export const guardInitialPosition = (
     rover: Rover,
 ): T.Effect<unknown, InitialPositionError, void> => pipe(
     obstacles,
-    A.findFirst((obstacle) =>
+    A.find((obstacle) =>
         obstacle.pos.x === rover.x && obstacle.pos.y === rover.y),
     T.whenCase(O.map(() => T.fail(new InitialPositionError()))),
 );
