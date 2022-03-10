@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  mac:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app/
