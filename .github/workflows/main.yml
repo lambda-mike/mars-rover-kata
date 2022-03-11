@@ -17,9 +17,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - run: |
-        brew install podman
-        podman machine init
-        podman machine start
-        podman info
-        pip3 install podman-compose
-        sudo podman-compose run mac nix-shell --run 'pnpm test'
+        # Install hyperkit and minikube
+        brew install hyperkit
+        brew install minikube
+        # Install Docker CLI
+        brew install docker
+        brew install docker-compose
+        # Start minikube
+        minikube start
+        # Tell Docker CLI to talk to minikube's VM
+        eval $(minikube docker-env)
+        # Save IP to a hostname
+        echo "$(minikube ip) docker.local" | sudo tee -a /etc/hosts > /dev/null
+        docker-compose run mac nix-shell --run 'pnpm test'
