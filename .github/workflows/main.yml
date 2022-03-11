@@ -12,3 +12,13 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
     - run: |
         nix-shell --run 'pnpm install && pnpm test'
+  mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2.4.0
+    - run: |
+        brew install docker docker-machine docker-compose
+        mkdir -p ~/.docker/cli-plugins
+        ln -sfn /usr/local/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+        brew services restart docker-machine
+        docker-compose run mac nix-shell --run 'pnpm test'
