@@ -17,11 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - run: |
-        brew install --cask docker virtualbox
-        brew install docker-machine
-        docker-machine create --driver virtualbox default
-        docker-machine restart
-        eval "$(docker-machine env default)"
-        docker-machine regenerate-certs default
-        docker-machine restart
-        docker-compose run mac nix-shell --run 'pnpm test'
+        brew install podman
+        brew install docker-compose
+        podman machine init
+        podman machine start
+        podman info
+        sudo docker-compose run mac nix-shell --run 'pnpm test'
+        #sudo podman-compose run mac nix-shell --run 'pnpm test'
