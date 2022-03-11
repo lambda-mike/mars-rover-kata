@@ -19,4 +19,5 @@ jobs:
     - run: |
         brew install --cask docker
         brew install docker-compose
+        sudo dockerd -H unix:///var/run/docker.sock &
         sudo docker-compose run mac nix-shell --run 'pnpm test'
