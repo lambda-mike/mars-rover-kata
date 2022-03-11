@@ -18,9 +18,8 @@ jobs:
     - uses: actions/checkout@v2.4.0
     - run: |
         brew install podman
-        brew install docker-compose
         podman machine init
         podman machine start
         podman info
-        sudo docker-compose run mac nix-shell --run 'pnpm test'
-        #sudo podman-compose run mac nix-shell --run 'pnpm test'
+        pip3 install podman-compose
+        sudo podman-compose run mac nix-shell --run 'pnpm test'
