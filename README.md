@@ -47,3 +47,11 @@ Watch mode:
 ## Misc
 
 `pnpm clean`
+
+## Docker (if you need it)
+
+`docker-compose run mac nix-shell --run 'pnpm test'`
+
+Watch mode:
+
+`docker-compose run mac nix-shell --run 'pnpm test -- --watch'`
