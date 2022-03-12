@@ -29,4 +29,5 @@ jobs:
         eval $(minikube docker-env)
         # Save IP to a hostname
         echo "$(minikube ip) docker.local" | sudo tee -a /etc/hosts > /dev/null
+        docker-compose build
         docker-compose run mac nix-shell --run 'pnpm test'
